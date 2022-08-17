@@ -8,12 +8,9 @@ information."""
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
 
-from korone.utils import log
-
-
-def main(argv: list[str]) -> int:
-    """Entry point."""
-
-    log.info("Program started")
-
-    return len(argv) - 1
+LOGGER_FORMAT_OUTPUT: str = "%(filename)s"  \
+                           ":%(funcName)s"  \
+                           ":%(lineno)s"    \
+                           "|%(levelname)s" \
+                           "|%(message)s"   \
+                           "|%(created)i"
