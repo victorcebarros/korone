@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "korone"
+version = "0.1.0"
+description = "Korone is a simple multipurpose Telegram Bot."
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.6"
+
+authors = [
+    { name="Victor Cebarros" },
+]
+
+
+[project.urls]
+"Homepage" = "https://github.com/victorcebarros/korone"
+"Bug Tracker" = "https://github.com/victorcebarros/korone/issues"
