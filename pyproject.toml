@@ -12,7 +12,7 @@ license = { file="LICENSE" }
 requires-python = ">=3.7"
 
 dependencies = [
-    "pyrogram >= 1.14.12",
+    "pyrogram >= 2.0.41",
     "tgcrypto >= 1.2.3",
 ]
 

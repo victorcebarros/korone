@@ -29,7 +29,8 @@ def init(api_id: str, api_hash: str, bot_token: str,
     #       work.
     global app  # pylint: disable=global-statement,invalid-name
     app = Client(
-        session_name=":memory:",
+        name="korone",
+        in_memory=True,
         api_id=api_id,
         api_hash=api_hash,
         bot_token=bot_token,
