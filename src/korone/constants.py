@@ -22,3 +22,5 @@ XDG_CONFIG_HOME: str = os.environ.get("XDG_CONFIG_HOME", "~/.config")
 XDG_DATA_HOME: str = os.environ.get("XDG_DATA_HOME", "~/.local/share")
 
 DEFAULT_CONFIG_PATH: str = f"{XDG_CONFIG_HOME}/korone/korone.conf"
+
+MODULES_PACKAGE_NAME: str = "korone.commands"
