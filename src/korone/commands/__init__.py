@@ -17,7 +17,8 @@ from korone.utils import log
 app: Client | None = None
 
 
-def init(api_id: str, api_hash: str, bot_token: str) -> None:
+def init(api_id: str, api_hash: str, bot_token: str,
+        use_ipv6: bool, workers: int) -> None:
     """Initializes Pyrogram's Client."""
     # NOTE: Yes, we could encapsulate app into a class, however it
     #       wouldn't necessarily fix the problem of "simultaneously
@@ -32,4 +33,6 @@ def init(api_id: str, api_hash: str, bot_token: str) -> None:
         api_id=api_id,
         api_hash=api_hash,
         bot_token=bot_token,
+        ipv6=use_ipv6,
+        workers=workers
     )

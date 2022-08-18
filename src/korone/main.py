@@ -24,10 +24,18 @@ def main(argv: list[str]) -> int:
 
     config.init("korone.conf")
 
+    ipv6: bool = False
+    use_ipv6: str = config.get("pyrogram", "USE_IPV6").lower() 
+
+    if use_ipv6 in ("yes", "true"):
+        ipv6 = True
+
     commands.init(
-        api_id=config.get("Authentication", "API_ID"),
-        api_hash=config.get("Authentication", "API_HASH"),
-        bot_token=config.get("Authentication", "BOT_TOKEN")
+        api_id=config.get("pyrogram", "API_ID"),
+        api_hash=config.get("pyrogram", "API_HASH"),
+        bot_token=config.get("pyrogram", "BOT_TOKEN"),
+        use_ipv6=ipv6,
+        workers=int(config.get("pyrogram", "WORKERS"))
     )
 
     if commands.app:

@@ -20,10 +20,12 @@ from korone.utils import log
 
 config: ConfigParser = ConfigParser()
 
-config["Authentication"] = {
+config["pyrogram"] = {
     "API_ID": "",
     "API_HASH": "",
     "BOT_TOKEN": "",
+    "USE_IPV6": "no",
+    "WORKERS": "24",
 }
 
 
