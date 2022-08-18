@@ -39,7 +39,7 @@ def init(cfgpath: str = "") -> None:
     log.debug("Using path %s", path)
 
     if dirname != "" and not path.isdir(dirname):
-        log.info("Could not find configuration directory, attempting to create")
+        log.info("Could not find configuration directory")
         try:
             log.debug("Creating configuration directory")
             os.mkdir(dirname)
@@ -48,7 +48,7 @@ def init(cfgpath: str = "") -> None:
             sys.exit(1)
 
     if not path.isfile(cfgpath):
-        log.info("Could not find configuration file, attempting to create")
+        log.info("Could not find configuration file")
         try:
             log.debug("Creating configuration file")
             with open(cfgpath, "w", encoding="utf-8") as configfile:
