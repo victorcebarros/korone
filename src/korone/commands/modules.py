@@ -13,6 +13,7 @@ from importlib import import_module
 from pyrogram import Client
 
 from korone import constants
+from korone.database import Database
 from korone.utils import log
 
 
@@ -24,18 +25,27 @@ class Module:
     has_help: bool
 
 
+APP: Client | None = None
+DATABASE: Database | None = None
+
 MODULES: list[Module] = [
     Module(name="hello", author="foo", has_help=False),
 ]
 
 
-def load(app: Client) -> None:
+def load(app: Client, database: Database) -> None:
     """Loads commands after initialization."""
     if app is None:
         log.critical("Pyrogram's Client app has not been initialized!")
         log.critical("User attempted to load commands before init.")
 
         raise TypeError("app has not been initialized!")
+
+    # NOTE: This is a bit hacky, however it allows me to
+    #       create a cleaner module interface for Korone commands.
+    global APP, DATABASE  # pylint: disable=global-statement
+    APP = app
+    DATABASE = database
 
     for module in MODULES:
         try:

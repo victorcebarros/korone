@@ -24,6 +24,9 @@ XDG_DATA_HOME: str = os.environ.get("XDG_DATA_HOME", "~/.local/share")
 DEFAULT_CONFIG_PATH: str = f"{XDG_CONFIG_HOME}/korone/korone.conf"
 DEFAULT_DBFILE_PATH: str = f"{XDG_DATA_HOME}/korone/korone.db"
 
+DEFAULT_WORKERS: int = 24
+DEFAULT_NAME: str = "korone"
+
 DATABASE_SETUP: str = """\
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,

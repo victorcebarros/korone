@@ -8,12 +8,10 @@ information."""
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
 
-import asyncio
-
-from korone import commands
 from korone import config
 
-from korone.commands import modules
+from korone.commands import App, AppParameters
+from korone.database import Database
 from korone.utils import log
 
 
@@ -25,21 +23,25 @@ def main(argv: list[str]) -> int:
     config.init("korone.conf")
 
     ipv6: bool = False
-    use_ipv6: str = config.get("pyrogram", "USE_IPV6").lower() 
 
-    if use_ipv6 in ("yes", "true"):
+    if config.get("pyrogram", "USE_IPV6").lower() in ("yes", "true"):
         ipv6 = True
 
-    commands.init(
+    database: Database = Database("korone.db")
+    database.open()
+    database.setup()
+
+    param: AppParameters = AppParameters(
         api_id=config.get("pyrogram", "API_ID"),
         api_hash=config.get("pyrogram", "API_HASH"),
         bot_token=config.get("pyrogram", "BOT_TOKEN"),
-        use_ipv6=ipv6,
-        workers=int(config.get("pyrogram", "WORKERS"))
+        ipv6=ipv6
     )
 
-    if commands.app:
-        modules.load(commands.app)
-        commands.app.run()
+    app: App = App(database, param)
+    app.setup()
+    app.run()
+
+    database.close()
 
     return len(argv) - 1
