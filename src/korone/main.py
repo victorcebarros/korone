@@ -40,8 +40,6 @@ def main(argv: list[str]) -> int:
 
     if commands.app:
         modules.load(commands.app)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(commands.app.run())
-        loop.close()
+        commands.app.run()
 
     return len(argv) - 1
