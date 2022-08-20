@@ -22,5 +22,37 @@ XDG_CONFIG_HOME: str = os.environ.get("XDG_CONFIG_HOME", "~/.config")
 XDG_DATA_HOME: str = os.environ.get("XDG_DATA_HOME", "~/.local/share")
 
 DEFAULT_CONFIG_PATH: str = f"{XDG_CONFIG_HOME}/korone/korone.conf"
+DEFAULT_DBFILE_PATH: str = f"{XDG_DATA_HOME}/korone/korone.db"
+
+DATABASE_SETUP: str = """\
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY,
+    language VARCHAR(2) NOT NULL DEFAULT "en",
+    registration_time INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS chats (
+    id INTEGER PRIMARY KEY,
+    language VARCHAR(2) NOT NULL DEFAULT "en",
+    registration_time INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS disabled (
+    chat_id INTEGER,
+    disabled_cmd TEXT
+);
+
+CREATE TABLE IF NOT EXISTS filters (
+    chat_id INTEGER,
+    handler TEXT,
+    data TEXT,
+    file_id TEXT,
+    filter_type TEXT
+);
+
+VACUUM;
+
+PRAGMA journal_mode="WAL";
+"""
 
 MODULES_PACKAGE_NAME: str = "korone.commands"
