@@ -29,7 +29,6 @@ class Database:
         self.path: str = path
         self.conn: Connection | None = None
 
-
     def open(self) -> None:
         """Connects to database."""
         if self.conn is not None:
@@ -38,7 +37,6 @@ class Database:
         log.info("Connecting to database %s", self.path)
         self.conn = sqlite3.connect(self.path)
         log.info("Successfully connected to database")
-
 
     def setup(self) -> None:
         """Sets up tables for database."""
@@ -58,7 +56,6 @@ class Database:
         # -sqlite3-connection-object
         self.conn.row_factory = sqlite3.Row
 
-
     def execute(self, sql: str, parameters: tuple = (), /) -> None:
         """Executes SQL Statement."""
         if self.conn is None:
@@ -67,7 +64,6 @@ class Database:
         log.debug("Executing '%s' with '%s' arguments", sql, parameters)
         with self.conn:
             self.conn.execute(sql, parameters)
-
 
     def close(self):
         """Closes database connection."""
