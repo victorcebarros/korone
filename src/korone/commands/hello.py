@@ -12,7 +12,7 @@ from pyrogram import Client
 from pyrogram import filters
 from pyrogram.types import Message
 
-from korone.utils import log
+from korone.utils import log, lang
 from korone.commands.modules import APP as app
 
 
@@ -24,4 +24,4 @@ async def command_hello(client: Client, message: Message) -> None:
     if client is None or message is None or message.chat is None:
         return
 
-    await client.send_message(chat_id=message.chat.id, text="Hello!")
+    await client.send_message(chat_id=message.chat.id, text=lang.gettext("hello", client.lang_code))
