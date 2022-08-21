@@ -12,7 +12,7 @@ from korone import config
 
 from korone.commands import App, AppParameters
 from korone.database import Database
-from korone.utils import log
+from korone.utils import log, lang
 
 
 def main(argv: list[str]) -> int:
@@ -30,6 +30,8 @@ def main(argv: list[str]) -> int:
     database: Database = Database("korone.db")
     database.open()
     database.setup()
+    
+    lang.load_locales()
 
     param: AppParameters = AppParameters(
         api_id=config.get("pyrogram", "API_ID"),
