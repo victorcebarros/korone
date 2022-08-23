@@ -35,6 +35,7 @@ class ChatManager(Manager):
             (chat.id, int(time()))
         )
 
+    # TODO: Return Iterable[Chat] instead
     def query(self, chat_id: int) -> Iterable[Row]:
         """Queries database with provided chat_id."""
 

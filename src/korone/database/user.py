@@ -36,6 +36,7 @@ class UserManager(Manager):
             (user.id, int(time()))
         )
 
+    # TODO: Return Iterable[Chat] instead
     def query(self, user_id: int) -> Iterable[Row]:
         """Queries database with provided user_id."""
 
