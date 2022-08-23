@@ -8,6 +8,7 @@ information."""
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
 
+from sqlite3 import Cursor
 from sqlite3 import Connection
 
 import sqlite3
@@ -56,14 +57,14 @@ class Database:
         # -sqlite3-connection-object
         self.conn.row_factory = sqlite3.Row
 
-    def execute(self, sql: str, parameters: tuple = (), /) -> None:
+    def execute(self, sql: str, parameters: tuple = (), /) -> Cursor:
         """Executes SQL Statement."""
         if self.conn is None:
             raise DatabaseError("Database is not yet connected!")
 
         log.debug("Executing '%s' with '%s' arguments", sql, parameters)
         with self.conn:
-            self.conn.execute(sql, parameters)
+            return self.conn.execute(sql, parameters)
 
     def close(self):
         """Closes database connection."""
