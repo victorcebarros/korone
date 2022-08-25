@@ -62,9 +62,9 @@ class StringResource:
         try:
             string = traverse(cls.load(language_code), resource)
         except KeyError:
-            string = traverse(cls.load("en"), resource)
-
-        if not isinstance(string, str):
-            string = default
+            try:
+                string = traverse(cls.load("en"), resource)
+            except KeyError:
+                string = default
 
         return string
