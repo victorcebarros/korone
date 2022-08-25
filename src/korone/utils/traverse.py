@@ -28,7 +28,7 @@ def traverse(tree: Union[dict, list], path: str, separator: str = "/") -> Any:
             try:
                 tree = tree[int(node)]
             except ValueError as err:
-                raise TypeError("Index must be an integer.") from err
+                raise ValueError("Index must be an integer.") from err
             continue
 
         if isinstance(tree, dict):
@@ -36,6 +36,6 @@ def traverse(tree: Union[dict, list], path: str, separator: str = "/") -> Any:
                 tree = tree[node]
                 continue
 
-        raise ValueError(f"Trying to access nonexistent nodes: {node}")
+        raise KeyError(f"Trying to access nonexistent nodes: {node}")
 
     return tree

@@ -57,12 +57,14 @@ class StringResource:
     @classmethod
     def get(cls, language_code: str, resource: str, default: str = "") -> str:
         """Returns locale-specific resource for a given language."""
-        string: str = traverse(cls.load(language_code), resource)
+        string: str
+
+        try:
+            string = traverse(cls.load(language_code), resource)
+        except KeyError:
+            string = traverse(cls.load("en"), resource)
 
         if not isinstance(string, str):
-            if language_code == "en":
-                return default
-
-            return cls.load("en").get(resource)
+            string = default
 
         return string
