@@ -8,6 +8,7 @@ information."""
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
 
+from dataclasses import dataclass
 from sqlite3 import Cursor
 from sqlite3 import Row
 from time import time
@@ -17,6 +18,14 @@ from pyrogram.types import User
 
 from korone.utils import log
 from korone.database.manager import Manager
+
+
+@dataclass
+class UserRow:
+    """User Row returned by query method."""
+    user_id: int
+    language_code: str
+    registration_time: int
 
 
 class UserManager(Manager):
@@ -36,8 +45,7 @@ class UserManager(Manager):
             (user.id, int(time()))
         )
 
-    # TODO: Return Iterable[Chat] instead
-    def query(self, user_id: int) -> Iterable[Row]:
+    def query(self, user_id: int) -> Iterable[UserRow]:
         """Queries database with provided user_id."""
 
         result: Cursor = self.database.execute(
@@ -45,7 +53,12 @@ class UserManager(Manager):
             (user_id,)
         )
 
-        return result.fetchall()
+        def user(user_row: Row) -> UserRow:
+            return UserRow(user_id=user_row['id'],
+                           language_code=user_row['language'],
+                           registration_time=user_row['registration_time'])
+
+        return map(user, result.fetchall())
 
     def delete(self, user_id: int):
         """Removes chat from the database."""
