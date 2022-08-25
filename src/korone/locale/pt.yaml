@@ -1,0 +1,8 @@
+metadata:
+  flag: "us"
+  code: "en"
+strings:
+  hello:
+    brief: "Diz Olá!"
+    description: "Ecoa ao usuário a mensagem Olá."
+    message: "Olá!"

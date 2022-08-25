@@ -12,8 +12,11 @@ from pyrogram import Client
 from pyrogram import filters
 from pyrogram.types import Message
 
-from korone.utils import log, lang
+from korone.utils import log
+
 from korone.commands.modules import APP as app
+
+from korone.locale import StringResource
 
 
 @app.on_message(filters=filters.command("hello"))  # type: ignore
@@ -21,7 +24,15 @@ async def command_hello(client: Client, message: Message) -> None:
     """Says hello."""
     log.info("user started interaction")
 
-    if client is None or message is None or message.chat is None:
+    if None in (client, message, message.chat, message.from_user):
         return
 
-    await client.send_message(chat_id=message.chat.id, text=lang.gettext("hello", client.lang_code))
+    if None in (message.chat.id, message.from_user.language_code):
+        return
+
+    language_code: str = message.from_user.language_code
+
+    await client.send_message(
+            chat_id=message.chat.id,
+            text=StringResource.get(language_code, "strings/hello/message")
+    )
