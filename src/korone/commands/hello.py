@@ -14,12 +14,10 @@ from pyrogram.types import Message
 
 from korone.utils import log
 
-from korone.commands.modules import APP as app
-
 from korone.locale import StringResource
 
 
-@app.on_message(filters=filters.command("hello"))  # type: ignore
+@Client.on_message(filters=filters.command("hello"))  # type: ignore
 async def command_hello(client: Client, message: Message) -> None:
     """Says hello."""
     log.info("user started interaction")

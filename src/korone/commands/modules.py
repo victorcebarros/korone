@@ -9,8 +9,13 @@ information."""
 
 from dataclasses import dataclass
 from importlib import import_module
+from types import FunctionType, ModuleType
+from typing import Iterable
+
+import inspect
 
 from pyrogram import Client
+from pyrogram.handlers.handler import Handler
 
 from korone import constants
 from korone.database import Database
@@ -25,12 +30,20 @@ class Module:
     has_help: bool
 
 
-APP: Client | None = None
+# FIXME: Parametrize DATABASE
 DATABASE: Database | None = None
 
 MODULES: list[Module] = [
     Module(name="hello", author="foo", has_help=False),
 ]
+
+
+def get_commands(module: ModuleType) -> Iterable[FunctionType]:
+    """Get commands from a module."""
+    functions = filter(inspect.isfunction,
+                       map(lambda var: getattr(module, var),
+                           vars(module)))
+    return filter(lambda fun: hasattr(fun, "handlers"), functions)
 
 
 def load(app: Client, database: Database) -> None:
@@ -41,16 +54,27 @@ def load(app: Client, database: Database) -> None:
 
         raise TypeError("app has not been initialized!")
 
-    # NOTE: This is a bit hacky, however it allows me to
-    #       create a cleaner module interface for Korone commands.
-    global APP, DATABASE  # pylint: disable=global-statement
-    APP = app
+    # FIXME: Parametrize DATABASE
+    global DATABASE  # pylint: disable=global-statement
     DATABASE = database
 
     for module in MODULES:
         try:
             log.info("Loading module %s", module.name)
-            import_module(f".{module.name}",
-                          constants.MODULES_PACKAGE_NAME)
+            component = import_module(f".{module.name}",
+                                      constants.MODULES_PACKAGE_NAME)
         except ModuleNotFoundError as err:
             log.error("Could not load module %s: %s", module.name, err)
+            continue
+
+        commands: Iterable[FunctionType] = get_commands(component)
+
+        def add(command: FunctionType) -> None:
+            for handler, group in command.handlers:  # type: ignore
+                if isinstance(handler, Handler):
+                    log.info("Loading command %s", command)
+                    app.add_handler(handler, group)
+
+        for command in commands:
+            log.info("Loading commands for module %s", module.name)
+            add(command)
