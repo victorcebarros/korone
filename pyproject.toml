@@ -17,6 +17,11 @@ dependencies = [
     "pyyaml >= 6.0"
 ]
 
+tests = [
+    "pytest >= 7.1.2",
+    "faker >= 14.1.0"
+]
+
 authors = [
     { name="Victor Cebarros" },
 ]
