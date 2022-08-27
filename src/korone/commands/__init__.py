@@ -32,9 +32,8 @@ class AppParameters:
 
 class App:
     """Handles Pyrogram's Client and Korone's Database."""
-    def __init__(self, database: Database, parameters: AppParameters):
+    def __init__(self, parameters: AppParameters):
         self.app: Client | None = None
-        self.database = database
         self.parameters: AppParameters = parameters
 
     def setup(self) -> None:
@@ -51,7 +50,7 @@ class App:
         )
 
         log.debug("Loading modules")
-        modules.load(self.app, self.database)
+        modules.load(self.app)
 
     def run(self) -> None:
         """Runs the Pyrogram's Client. Same as Pyrogram's run() method."""

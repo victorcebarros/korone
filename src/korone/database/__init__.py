@@ -23,31 +23,39 @@ class DatabaseError(Exception):
 
 class Database:
     """Database manager."""
-    def __init__(self, path: str = ""):
+    path: str
+    conn: Connection
+
+    @classmethod
+    def isopen(cls):
+        """Checks if database is open."""
+        return hasattr(cls, "conn") and isinstance(cls.conn, Connection)
+
+    @classmethod
+    def connect(cls, path: str = "") -> None:
+        """Connects to database."""
+        if cls.isopen():
+            raise DatabaseError("Database is already connected!")
+
         if path.strip() == "":
             path = constants.DEFAULT_DBFILE_PATH
 
-        self.path: str = path
-        self.conn: Connection | None = None
+        cls.path = path
 
-    def open(self) -> None:
-        """Connects to database."""
-        if self.conn is not None:
-            raise DatabaseError("Database is already connected!")
-
-        log.info("Connecting to database %s", self.path)
-        self.conn = sqlite3.connect(self.path)
+        log.info("Connecting to database %s", cls.path)
+        cls.conn = sqlite3.connect(cls.path)
         log.info("Successfully connected to database")
 
-    def setup(self) -> None:
+    @classmethod
+    def setup(cls) -> None:
         """Sets up tables for database."""
-        if self.conn is None:
+        if not cls.isopen():
             raise DatabaseError("Database is not yet connected!")
 
         log.info("Setting up database")
 
-        with self.conn:
-            self.conn.executescript(constants.DATABASE_SETUP)
+        with cls.conn:
+            cls.conn.executescript(constants.DATABASE_SETUP)
 
         log.info("Committing initial setup changes to database")
 
@@ -55,21 +63,23 @@ class Database:
         # Refer to https://stackoverflow.com/questions/44009452
         # /what-is-the-purpose-of-the-row-factory-method-of-an
         # -sqlite3-connection-object
-        self.conn.row_factory = sqlite3.Row
+        cls.conn.row_factory = sqlite3.Row
 
-    def execute(self, sql: str, parameters: tuple = (), /) -> Cursor:
+    @classmethod
+    def execute(cls, sql: str, parameters: tuple = (), /) -> Cursor:
         """Executes SQL Statement."""
-        if self.conn is None:
+        if not cls.isopen():
             raise DatabaseError("Database is not yet connected!")
 
         log.debug("Executing '%s' with '%s' arguments", sql, parameters)
-        with self.conn:
-            return self.conn.execute(sql, parameters)
+        with cls.conn:
+            return cls.conn.execute(sql, parameters)
 
-    def close(self):
+    @classmethod
+    def close(cls):
         """Closes database connection."""
-        if self.conn is None:
+        if not cls.isopen():
             raise DatabaseError("Database is not yet connected!")
 
         log.info("Closing database")
-        self.conn.close()
+        cls.conn.close()

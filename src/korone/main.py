@@ -27,9 +27,8 @@ def main(argv: list[str]) -> int:
     if config.get("pyrogram", "USE_IPV6").lower() in ("yes", "true", "1"):
         ipv6 = True
 
-    database: Database = Database("korone.db")
-    database.open()
-    database.setup()
+    Database.connect("korone.db")
+    Database.setup()
 
     param: AppParameters = AppParameters(
         api_id=config.get("pyrogram", "API_ID"),
@@ -38,10 +37,10 @@ def main(argv: list[str]) -> int:
         ipv6=ipv6
     )
 
-    app: App = App(database, param)
+    app: App = App(param)
     app.setup()
     app.run()
 
-    database.close()
+    Database.close()
 
     return len(argv) - 1
