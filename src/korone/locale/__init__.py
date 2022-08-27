@@ -39,12 +39,7 @@ class StringResource:
         try:
             langfile: TextIOWrapper
             with open(langpack, "r", encoding="utf-8") as langfile:
-                loader: Any = yaml.Loader
-
-                if hasattr(yaml, "CLoader"):
-                    loader = yaml.CLoader
-
-                content: dict = yaml.load(langfile, loader)
+                content: dict = yaml.safe_load(langfile)
 
                 cls.languages[language_code] = content
 
