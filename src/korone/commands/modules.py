@@ -66,8 +66,8 @@ def load(app: Client) -> None:
             for handler, group in command.handlers:  # type: ignore
                 if isinstance(handler, Handler) and isinstance(group, int):
                     log.info("Loading command %s", command)
-                    log.info("\thandler: %s", command, handler)
-                    log.info("\tgroup:   %s", command, group)
+                    log.info("\thandler: %s", handler)
+                    log.info("\tgroup:   %d", group)
                     app.add_handler(handler, group)
                     successful = True
 
