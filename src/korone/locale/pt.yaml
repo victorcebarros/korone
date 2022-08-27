@@ -2,7 +2,11 @@ metadata:
   flag: "us"
   code: "en"
 strings:
-  hello:
-    brief: "Diz Olá!"
-    description: "Ecoa ao usuário a mensagem Olá."
+  greet:
+    brief: "Saúda o usuário"
+    description: "Saúda o usuário com a linguagem apropriada."
     message: "Olá!"
+  farewell:
+    brief: "Diz adeus ao usuário"
+    description: "Diz adeus ao usuário com a linguagem apropriada."
+    message: "Adeus!"

@@ -2,7 +2,11 @@ metadata:
   flag: "br"
   code: "pt"
 strings:
-  hello:
-    brief: "Says Hello!"
-    description: "Echoes to the user a Hello message."
-    message: "Hello!"
+  greet:
+    brief: "Greets the user"
+    description: "Greets the user with the appropriate language."
+    message: "Hello there!"
+  farewell:
+    brief: "Says farewell to the user"
+    description: "Says farewell to the user with the appropriate language."
+    message: "Farewell!"
