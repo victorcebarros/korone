@@ -24,7 +24,7 @@ def main(argv: list[str]) -> int:
 
     ipv6: bool = False
 
-    if config.get("pyrogram", "USE_IPV6").lower() in ("yes", "true"):
+    if config.get("pyrogram", "USE_IPV6").lower() in ("yes", "true", "1"):
         ipv6 = True
 
     database: Database = Database("korone.db")
