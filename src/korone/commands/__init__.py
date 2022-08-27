@@ -7,6 +7,7 @@ information."""
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
+
 from dataclasses import dataclass
 
 from pyrogram import Client
