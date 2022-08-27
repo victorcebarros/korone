@@ -18,7 +18,6 @@ from pyrogram import Client
 from pyrogram.handlers.handler import Handler
 
 from korone import constants
-from korone.database import Database
 from korone.utils import log
 
 
@@ -29,9 +28,6 @@ class Module:
     author: str
     has_help: bool
 
-
-# FIXME: Parametrize DATABASE
-DATABASE: Database | None = None
 
 MODULES: list[Module] = [
     Module(name="hello", author="foo", has_help=False),
@@ -46,17 +42,13 @@ def get_commands(module: ModuleType) -> Iterable[FunctionType]:
     return filter(lambda fun: hasattr(fun, "handlers"), functions)
 
 
-def load(app: Client, database: Database) -> None:
+def load(app: Client) -> None:
     """Loads commands after initialization."""
     if app is None:
         log.critical("Pyrogram's Client app has not been initialized!")
         log.critical("User attempted to load commands before init.")
 
         raise TypeError("app has not been initialized!")
-
-    # FIXME: Parametrize DATABASE
-    global DATABASE  # pylint: disable=global-statement
-    DATABASE = database
 
     for module in MODULES:
         try:
@@ -69,12 +61,21 @@ def load(app: Client, database: Database) -> None:
 
         commands: Iterable[FunctionType] = get_commands(component)
 
-        def add(command: FunctionType) -> None:
+        def add(command: FunctionType) -> bool:
+            successful: bool = False
             for handler, group in command.handlers:  # type: ignore
-                if isinstance(handler, Handler):
+                if isinstance(handler, Handler) and isinstance(group, int):
                     log.info("Loading command %s", command)
+                    log.info("\thandler: %s", command, handler)
+                    log.info("\tgroup:   %s", command, group)
                     app.add_handler(handler, group)
+                    successful = True
+
+            return successful
 
         for command in commands:
-            log.info("Loading commands for module %s", module.name)
-            add(command)
+            log.info("Adding command %s from module", command)
+            if not add(command):
+                log.info("Could not add command %s", command)
+                continue
+            log.info("Successfully added command %s", command)
