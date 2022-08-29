@@ -14,12 +14,15 @@ from types import FunctionType, ModuleType
 from typing import Iterable
 
 import inspect
+import logging
 
 from pyrogram import Client
 from pyrogram.handlers.handler import Handler
 
 from korone import constants
-from korone.utils import log
+
+
+log = logging.getLogger(__name__)
 
 
 @dataclass

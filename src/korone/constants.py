@@ -11,7 +11,8 @@ information."""
 import os
 
 
-LOGGER_FORMAT_OUTPUT: str = "%(filename)s"  \
+LOGGER_FORMAT_OUTPUT: str = "%(name)s"      \
+                           ":%(filename)s"  \
                            ":%(funcName)s"  \
                            ":%(lineno)s"    \
                            "|%(levelname)s" \

@@ -13,9 +13,12 @@ from os import path
 
 import os
 import sys
+import logging
 
 from korone import constants
-from korone.utils import log
+
+
+log = logging.getLogger(__name__)
 
 
 config: ConfigParser = ConfigParser()

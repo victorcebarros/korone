@@ -12,10 +12,14 @@ from io import TextIOWrapper
 from os import path
 from typing import Any
 
+import logging
+
 import yaml
 
-from korone.utils import log
 from korone.utils.traverse import traverse
+
+
+log = logging.getLogger(__name__)
 
 
 class StringResource:

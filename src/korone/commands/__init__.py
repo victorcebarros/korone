@@ -10,13 +10,17 @@ information."""
 
 from dataclasses import dataclass
 
+import logging
+
 from pyrogram import Client
 
 from korone import config
 from korone import constants
 from korone.commands import modules
 from korone.database import Database
-from korone.utils import log
+
+
+log = logging.getLogger(__name__)
 
 
 @dataclass

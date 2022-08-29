@@ -11,10 +11,13 @@ information."""
 from sqlite3 import Cursor
 from sqlite3 import Connection
 
+import logging
 import sqlite3
 
 from korone import constants
-from korone.utils import log
+
+
+log = logging.getLogger(__name__)
 
 
 class DatabaseError(Exception):

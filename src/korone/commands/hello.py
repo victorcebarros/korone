@@ -7,14 +7,16 @@ information."""
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
+import logging
 
 from pyrogram import Client
 from pyrogram import filters
 from pyrogram.types import Message
 
-from korone.utils import log
-
 from korone.locale import StringResource
+
+
+log = logging.getLogger(__name__)
 
 
 def get_language_code(message: Message) -> str:

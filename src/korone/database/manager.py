@@ -7,9 +7,12 @@ information."""
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
+import logging
 
 from korone.database import Database
-from korone.utils import log
+
+
+log = logging.getLogger(__name__)
 
 
 class Manager:  # pylint: disable=too-few-public-methods

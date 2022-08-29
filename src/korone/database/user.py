@@ -14,10 +14,14 @@ from sqlite3 import Row
 from time import time
 from typing import Iterable
 
+import logging
+
 from pyrogram.types import User
 
-from korone.utils import log
 from korone.database.manager import Manager
+
+
+log = logging.getLogger(__name__)
 
 
 @dataclass

@@ -8,11 +8,15 @@ information."""
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
 
+import logging
+
 from korone import config
 
 from korone.commands import App, AppParameters
 from korone.database import Database
-from korone.utils import log
+
+
+log = logging.getLogger(__name__)
 
 
 def main(argv: list[str]) -> int:
