@@ -14,7 +14,6 @@ import sys
 from korone import constants
 from korone.main import main
 
-
 LEVEL: int = logging.INFO
 
 

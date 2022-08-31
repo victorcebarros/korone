@@ -8,17 +8,14 @@ information."""
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
 
-from dataclasses import dataclass
-
 import logging
+from dataclasses import dataclass
 
 from pyrogram import Client
 
-from korone import config
-from korone import constants
+from korone import config, constants
 from korone.commands import modules
 from korone.database import Database
-
 
 log = logging.getLogger(__name__)
 
@@ -26,6 +23,7 @@ log = logging.getLogger(__name__)
 @dataclass
 class AppParameters:
     """Pyrogram's Client parameters."""
+
     api_hash: str
     api_id: str
     bot_token: str
@@ -37,6 +35,7 @@ class AppParameters:
 
 class App:
     """Handles Pyrogram's Client and Korone's Database."""
+
     def __init__(self, parameters: AppParameters):
         self.app: Client | None = None
         self.parameters: AppParameters = parameters
@@ -51,7 +50,7 @@ class App:
             in_memory=self.parameters.in_memory,
             ipv6=self.parameters.ipv6,
             name=self.parameters.name,
-            workers=self.parameters.workers
+            workers=self.parameters.workers,
         )
 
         log.debug("Loading modules")

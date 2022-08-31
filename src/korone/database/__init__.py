@@ -8,14 +8,11 @@ information."""
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
 
-from sqlite3 import Cursor
-from sqlite3 import Connection
-
 import logging
 import sqlite3
+from sqlite3 import Connection, Cursor
 
 from korone import constants
-
 
 log = logging.getLogger(__name__)
 
@@ -26,6 +23,7 @@ class DatabaseError(Exception):
 
 class Database:
     """Database manager."""
+
     path: str
     conn: Connection
 

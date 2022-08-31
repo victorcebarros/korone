@@ -9,12 +9,10 @@ information."""
 
 import logging
 
-from pyrogram import Client
-from pyrogram import filters
+from pyrogram import Client, filters
 from pyrogram.types import Message
 
 from korone.locale import StringResource
-
 
 log = logging.getLogger(__name__)
 
@@ -45,9 +43,7 @@ async def command_greet(_: Client, message: Message) -> None:
     """Says hello."""
     language_code: str = get_language_code(message)
 
-    await message.reply(
-        StringResource.get(language_code, "strings/greet/message")
-    )
+    await message.reply(StringResource.get(language_code, "strings/greet/message"))
 
 
 @Client.on_message(filters.command("farewell"))
@@ -55,6 +51,4 @@ async def command_farewell(_: Client, message: Message) -> None:
     """Says farewell."""
     language_code: str = get_language_code(message)
 
-    await message.reply(
-        StringResource.get(language_code, "strings/farewell/message")
-    )
+    await message.reply(StringResource.get(language_code, "strings/farewell/message"))

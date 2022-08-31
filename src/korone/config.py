@@ -8,15 +8,13 @@ information."""
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
 
+import logging
+import os
+import sys
 from configparser import ConfigParser
 from os import path
 
-import os
-import sys
-import logging
-
 from korone import constants
-
 
 log = logging.getLogger(__name__)
 

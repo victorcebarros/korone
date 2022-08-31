@@ -10,14 +10,15 @@ information."""
 
 import os
 
-
-LOGGER_FORMAT_OUTPUT: str = "%(name)s"      \
-                           ":%(filename)s"  \
-                           ":%(funcName)s"  \
-                           ":%(lineno)s"    \
-                           "|%(levelname)s" \
-                           "|%(message)s"   \
-                           "|%(created)i"
+LOGGER_FORMAT_OUTPUT: str = (
+    "%(name)s"
+    ":%(filename)s"
+    ":%(funcName)s"
+    ":%(lineno)s"
+    "|%(levelname)s"
+    "|%(message)s"
+    "|%(created)i"
+)
 
 XDG_CONFIG_HOME: str = os.environ.get("XDG_CONFIG_HOME", "~/.config")
 XDG_DATA_HOME: str = os.environ.get("XDG_DATA_HOME", "~/.local/share")

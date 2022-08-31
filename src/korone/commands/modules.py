@@ -8,19 +8,17 @@ information."""
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
 
+import inspect
+import logging
 from dataclasses import dataclass
 from importlib import import_module
 from types import FunctionType, ModuleType
 from typing import Iterable
 
-import inspect
-import logging
-
 from pyrogram import Client
 from pyrogram.handlers.handler import Handler
 
 from korone import constants
-
 
 log = logging.getLogger(__name__)
 
@@ -28,6 +26,7 @@ log = logging.getLogger(__name__)
 @dataclass
 class Module:
     """Module metadata."""
+
     name: str
     author: str
     has_help: bool
@@ -40,9 +39,9 @@ MODULES: list[Module] = [
 
 def get_commands(module: ModuleType) -> Iterable[FunctionType]:
     """Get commands from a module."""
-    functions = filter(inspect.isfunction,
-                       map(lambda var: getattr(module, var),
-                           vars(module)))
+    functions = filter(
+        inspect.isfunction, map(lambda var: getattr(module, var), vars(module))
+    )
     return filter(lambda fun: hasattr(fun, "handlers"), functions)
 
 
@@ -57,8 +56,7 @@ def load(app: Client) -> None:
     for module in MODULES:
         try:
             log.info("Loading module %s", module.name)
-            component = import_module(f".{module.name}",
-                                      constants.MODULES_PACKAGE_NAME)
+            component = import_module(f".{module.name}", constants.MODULES_PACKAGE_NAME)
         except ModuleNotFoundError as err:
             log.error("Could not load module %s: %s", module.name, err)
             continue

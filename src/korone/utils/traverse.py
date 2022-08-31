@@ -8,8 +8,7 @@ information."""
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
 
-from typing import Any
-from typing import Union
+from typing import Any, Union
 
 
 def traverse(tree: Union[dict, list], path: str, separator: str = "/") -> Any:

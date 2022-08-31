@@ -11,10 +11,8 @@ information."""
 import logging
 
 from korone import config
-
 from korone.commands import App, AppParameters
 from korone.database import Database
-
 
 log = logging.getLogger(__name__)
 
@@ -38,7 +36,7 @@ def main(argv: list[str]) -> int:
         api_id=config.get("pyrogram", "API_ID"),
         api_hash=config.get("pyrogram", "API_HASH"),
         bot_token=config.get("pyrogram", "BOT_TOKEN"),
-        ipv6=ipv6
+        ipv6=ipv6,
     )
 
     app: App = App(param)

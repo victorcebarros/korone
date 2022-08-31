@@ -8,22 +8,21 @@ information."""
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
 
+import logging
 from io import TextIOWrapper
 from os import path
 from typing import Any
 
-import logging
-
 import yaml
 
 from korone.utils.traverse import traverse
-
 
 log = logging.getLogger(__name__)
 
 
 class StringResource:
     """Get locale-specific string resources."""
+
     languages: dict[str, Any] = {}
     dirpath: str = path.dirname(__file__)
 
