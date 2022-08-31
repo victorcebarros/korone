@@ -29,25 +29,26 @@ DEFAULT_WORKERS: int = 24
 DEFAULT_NAME: str = "korone"
 
 DATABASE_SETUP: str = """\
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Users (
+    uuid INTEGER PRIMARY KEY,
     language VARCHAR(2) NOT NULL DEFAULT "en",
-    registration_time INTEGER NOT NULL
+    registrydate INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS chats (
-    id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Chats (
+    uuid INTEGER PRIMARY KEY,
     language VARCHAR(2) NOT NULL DEFAULT "en",
-    registration_time INTEGER NOT NULL
+    registrydate INTEGER NOT NULL,
+    chattype TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS disabled (
-    chat_id INTEGER,
-    disabled_cmd TEXT
+CREATE TABLE IF NOT EXISTS DisabledCommands (
+    chat_uuid INTEGER,
+    disabled_commands TEXT
 );
 
-CREATE TABLE IF NOT EXISTS filters (
-    chat_id INTEGER,
+CREATE TABLE IF NOT EXISTS Filters (
+    chat_uuid INTEGER,
     handler TEXT,
     data TEXT,
     file_id TEXT,
