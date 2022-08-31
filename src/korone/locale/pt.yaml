@@ -1,6 +1,6 @@
 metadata:
-  flag: "us"
-  code: "en"
+  flag: "br"
+  code: "pt"
 strings:
   greet:
     brief: "Saúda o usuário"

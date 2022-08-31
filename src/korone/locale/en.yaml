@@ -1,6 +1,6 @@
 metadata:
-  flag: "br"
-  code: "pt"
+  flag: "us"
+  code: "en"
 strings:
   greet:
     brief: "Greets the user"
