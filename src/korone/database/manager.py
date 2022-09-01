@@ -122,7 +122,7 @@ class Manager(ABC, Generic[T]):
 
     def valid(self) -> bool:
         """Returns whether or not the instance is in a valid state."""
-        return not (self.table == "" or self.columns == {})
+        return not (self.table == "" or not self.columns)
 
 
 class ChatManager(Manager[Chat]):
