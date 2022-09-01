@@ -16,7 +16,7 @@ from enum import Enum, auto
 from sqlite3 import Row
 from typing import Any, Generic, Iterable, TypeVar
 
-from pyrogram.types import Chat
+from pyrogram.types import Chat, User
 
 from korone.database import Database
 
@@ -133,7 +133,8 @@ class ChatManager(Manager[Chat]):
     def update(
         self, update: Cell, condition: Cell, relation: Relation = Relation.EQ
     ) -> None:
-        """Updates item on database."""
+        """Updates Chat(s) on database."""
+
         if condition.data is None or condition.data == "":
             raise AttributeError("Condition data can't be empty!")
 
@@ -164,3 +165,82 @@ class ChatManager(Manager[Chat]):
         chat.language = row[self.columns[Column.LANGUAGE]]  # type: ignore
 
         return chat
+
+
+class UserManager(Manager[User]):
+    """User Manager for database."""
+
+    def __init__(self, database: Database):
+        super().__init__(database)
+
+        self.table: str = "Users"
+        self.columns: dict[Column, str] = {
+            Column.UUID: "uuid",
+            Column.LANGUAGE: "language",
+            Column.REGISTRYDATE: "registrydate",
+        }
+
+    def insert(self, item: User) -> None:
+        """Inserts User to Database."""
+
+        if item.id is None:
+            raise RuntimeError("item.id must not be None!")
+
+        columns: str = (
+            f"{self.columns[Column.UUID]}, {self.columns[Column.REGISTRYDATE]}"
+        )
+
+        self.database.execute(
+            f"INSERT INTO {self.table} ({columns}) VALUES (?, ?)",
+            (item.id, int(time.time())),
+        )
+
+    def query(self, search: Cell, relation: Relation = Relation.EQ) -> Iterable[User]:
+        """Queries User(s) from the database."""
+
+        if search.data is None or search.data == "":
+            return map(self.cast, self.database.execute(f"SELECT * FROM {self.table}"))
+
+        column: str = self.columns[search.column]
+        return map(
+            self.cast,
+            self.database.execute(
+                f"SELECT * FROMM {self.table} WHERE {column} {relation.value} ?",
+                (search.data,),
+            ),
+        )
+
+    def update(
+        self, update: Cell, condition: Cell, relation: Relation = Relation.EQ
+    ) -> None:
+        """Update User(s) on database."""
+
+        if condition.data is None or condition.data == "":
+            raise AttributeError("Condition data can't be empty!")
+
+        self.database.execute(
+            f"UPDATE {self.table} SET {self.columns[update.column]} = ? "
+            f"WHERE {self.columns[condition.column]} {relation.value} ?",
+            (update.data, condition.data),
+        )
+
+    def delete(self, condition: Cell, relation: Relation = Relation.EQ) -> None:
+        """Deletes item from the database."""
+        if condition.data is None or condition.data == "":
+            raise AttributeError("Condition data can't be empty!")
+
+        self.database.execute(
+            f"DELETE FROM {self.table} WHERE "
+            f"{self.columns[condition.column]} {relation.value} ?",
+            (condition.data,),
+        )
+
+    def cast(self, row: Row) -> User:
+        user: User = User(
+            id=row[self.columns[Column.UUID]],
+            language_code=row[self.columns[Column.LANGUAGE]],
+        )
+
+        user.registrydate = row[self.columns[Column.REGISTRYDATE]]  # type: ignore
+
+        return user
