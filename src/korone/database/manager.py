@@ -62,28 +62,67 @@ class Manager(ABC, Generic[T]):
             raise RuntimeError("Database is not initialized!")
 
         self.database: Database = database
+        self.table: str = ""
+        self.columns: dict[Column, str] = {}
 
     @abstractmethod
     def insert(self, item: T) -> None:
         """Inserts item to Database."""
 
     @abstractmethod
+    def cast(self, row: Row) -> T:
+        """Casts row to T type."""
+
     def query(self, search: Cell, relation: Relation = Relation.EQ) -> Iterable[T]:
         """Queries item from database."""
+        if not self.valid():
+            raise RuntimeError("You should not use the Manager class directly!")
 
-    @abstractmethod
+        if search.data is None or search.data == "":
+            return map(self.cast, self.database.execute(f"SELECT * FROM {self.table}"))
+
+        column: str = self.columns[search.column]
+        return map(
+            self.cast,
+            self.database.execute(
+                f"SELECT * FROM {self.table} WHERE {column} {relation.value} ?",
+                (search.data,),
+            ),
+        )
+
     def update(
         self, update: Cell, condition: Cell, relation: Relation = Relation.EQ
     ) -> None:
         """Updates item on database."""
+        if not self.valid():
+            raise RuntimeError("You should not use the Manager class directly!")
 
-    @abstractmethod
+        if condition.data is None or condition.data == "":
+            raise AttributeError("Condition data can't be empty!")
+
+        self.database.execute(
+            f"UPDATE {self.table} SET {self.columns[update.column]} = ? "
+            f"WHERE {self.columns[condition.column]} {relation.value} ?",
+            (update.data, condition.data),
+        )
+
     def delete(self, condition: Cell, relation: Relation = Relation.EQ) -> None:
         """Deletes item from the database."""
+        if not self.valid():
+            raise RuntimeError("You should not use the Manager class directly!")
 
-    @abstractmethod
-    def cast(self, row: Row) -> T:
-        """Casts row to T type."""
+        if condition.data is None or condition.data == "":
+            raise AttributeError("Condition data can't be empty!")
+
+        self.database.execute(
+            f"DELETE FROM {self.table} WHERE "
+            f"{self.columns[condition.column]} {relation.value} ?",
+            (condition.data,),
+        )
+
+    def valid(self) -> bool:
+        """Returns whether or not the instance is in a valid state."""
+        return not (self.table == "" or self.columns == {})
 
 
 class ChatManager(Manager[Chat]):
@@ -113,46 +152,6 @@ class ChatManager(Manager[Chat]):
         self.database.execute(
             f"INSERT INTO {self.table} ({columns}) VALUES (?, ?, ?)",
             (item.id, item.type.value, int(time.time())),
-        )
-
-    def query(self, search: Cell, relation: Relation = Relation.EQ) -> Iterable[Chat]:
-        """Queries item from database."""
-
-        if search.data is None or search.data == "":
-            return map(self.cast, self.database.execute(f"SELECT * FROM {self.table}"))
-
-        column: str = self.columns[search.column]
-        return map(
-            self.cast,
-            self.database.execute(
-                f"SELECT * FROM {self.table} WHERE {column} {relation.value} ?",
-                (search.data,),
-            ),
-        )
-
-    def update(
-        self, update: Cell, condition: Cell, relation: Relation = Relation.EQ
-    ) -> None:
-        """Updates Chat(s) on database."""
-
-        if condition.data is None or condition.data == "":
-            raise AttributeError("Condition data can't be empty!")
-
-        self.database.execute(
-            f"UPDATE {self.table} SET {self.columns[update.column]} = ?"
-            f"WHERE {self.columns[condition.column]} {relation.value} ?",
-            (update.data, condition.data),
-        )
-
-    def delete(self, condition: Cell, relation: Relation = Relation.EQ) -> None:
-        """Deletes item from the database."""
-        if condition.data is None or condition.data == "":
-            raise AttributeError("Condition data can't be empty!")
-
-        self.database.execute(
-            f"DELETE FROM {self.table} WHERE "
-            f"{self.columns[condition.column]} {relation.value} ?",
-            (condition.data,),
         )
 
     def cast(self, row: Row) -> Chat:
@@ -193,46 +192,6 @@ class UserManager(Manager[User]):
         self.database.execute(
             f"INSERT INTO {self.table} ({columns}) VALUES (?, ?)",
             (item.id, int(time.time())),
-        )
-
-    def query(self, search: Cell, relation: Relation = Relation.EQ) -> Iterable[User]:
-        """Queries User(s) from the database."""
-
-        if search.data is None or search.data == "":
-            return map(self.cast, self.database.execute(f"SELECT * FROM {self.table}"))
-
-        column: str = self.columns[search.column]
-        return map(
-            self.cast,
-            self.database.execute(
-                f"SELECT * FROMM {self.table} WHERE {column} {relation.value} ?",
-                (search.data,),
-            ),
-        )
-
-    def update(
-        self, update: Cell, condition: Cell, relation: Relation = Relation.EQ
-    ) -> None:
-        """Update User(s) on database."""
-
-        if condition.data is None or condition.data == "":
-            raise AttributeError("Condition data can't be empty!")
-
-        self.database.execute(
-            f"UPDATE {self.table} SET {self.columns[update.column]} = ? "
-            f"WHERE {self.columns[condition.column]} {relation.value} ?",
-            (update.data, condition.data),
-        )
-
-    def delete(self, condition: Cell, relation: Relation = Relation.EQ) -> None:
-        """Deletes item from the database."""
-        if condition.data is None or condition.data == "":
-            raise AttributeError("Condition data can't be empty!")
-
-        self.database.execute(
-            f"DELETE FROM {self.table} WHERE "
-            f"{self.columns[condition.column]} {relation.value} ?",
-            (condition.data,),
         )
 
     def cast(self, row: Row) -> User:
