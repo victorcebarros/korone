@@ -1,9 +1,3 @@
-"""Korone is a simple multipurpose Telegram Bot.
-
-This is a complete rewrite of PyKorone, refer to
-https://github.com/AmanoTeam/PyKorone and README.md for more
-information."""
-
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
@@ -43,7 +37,9 @@ async def command_greet(_: Client, message: Message) -> None:
     """Says hello."""
     language_code: str = get_language_code(message)
 
-    await message.reply(StringResource.get(language_code, "strings/greet/message"))
+    await message.reply(
+        StringResource.get(language_code, "strings/greet/message"),
+    )
 
 
 @Client.on_message(filters.command("farewell"))
@@ -51,4 +47,6 @@ async def command_farewell(_: Client, message: Message) -> None:
     """Says farewell."""
     language_code: str = get_language_code(message)
 
-    await message.reply(StringResource.get(language_code, "strings/farewell/message"))
+    await message.reply(
+        StringResource.get(language_code, "strings/farewell/message"),
+    )

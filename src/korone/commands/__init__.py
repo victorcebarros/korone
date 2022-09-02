@@ -1,21 +1,13 @@
-"""Korone is a simple multipurpose Telegram Bot.
-
-This is a complete rewrite of PyKorone, refer to
-https://github.com/AmanoTeam/PyKorone and README.md for more
-information."""
-
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
-
 
 import logging
 from dataclasses import dataclass
 
 from pyrogram import Client
 
-from korone import config, constants
+from korone import constants
 from korone.commands import modules
-from korone.database import Database
 
 log = logging.getLogger(__name__)
 
