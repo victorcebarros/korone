@@ -1,12 +1,5 @@
-"""Korone is a simple multipurpose Telegram Bot.
-
-This is a complete rewrite of PyKorone, refer to
-https://github.com/AmanoTeam/PyKorone and README.md for more
-information."""
-
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
-
 
 import inspect
 import logging
@@ -56,7 +49,10 @@ def load(app: Client) -> None:
     for module in MODULES:
         try:
             log.info("Loading module %s", module.name)
-            component = import_module(f".{module.name}", constants.MODULES_PACKAGE_NAME)
+            component = import_module(
+                f".{module.name}",
+                constants.MODULES_PACKAGE_NAME,
+            )
         except ModuleNotFoundError as err:
             log.error("Could not load module %s: %s", module.name, err)
             continue
