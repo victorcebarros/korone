@@ -3,11 +3,6 @@ This is a complete rewrite of PyKorone, refer to
 https://github.com/AmanoTeam/PyKorone and README.md for more
 information."""
 
-import os, sys
-
-sys.path.insert(0, f"{os.getcwd()}/src")   # makes possible to call
-                                           # from "korone" import ...
-
 from faker import Faker
 from pyrogram.types import User
 
@@ -22,7 +17,7 @@ Database.setup()
 
 class TestUserManager:
     """Tests the management of user in database"""
-    user_manager = UserManager(Database)
+    user_manager = UserManager(Database())
 
     def test_insert_and_query(self):
         """Inserts a random user and query it"""
@@ -52,4 +47,13 @@ def cleanup(request):
     def drop_and_close():
         Database.execute("DROP TABLE users;") #removes all data in user
         Database.close()
+
+@fixture(scope="session", autouse=True)
+def cleanup(request):
+    """Cleans and closes database."""
+
+    def drop_and_close():
+        Database.execute("DROP TABLE users;")  # removes all data in user
+        Database.close()
+
     request.addfinalizer(drop_and_close)
