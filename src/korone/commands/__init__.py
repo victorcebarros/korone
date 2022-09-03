@@ -26,14 +26,18 @@ class AppParameters:
 
 
 class App:
-    """Handles Pyrogram's Client and Korone's Database."""
-
     def __init__(self, parameters: AppParameters):
         self.app: Client | None = None
         self.parameters: AppParameters = parameters
 
     def setup(self) -> None:
-        """Sets up Pyrogram's Client and load modules."""
+        """
+        The setup function is called when the module is loaded. It creates a new
+        Pyrogram Client object and stores it in self.app for later use.
+
+        :param self: Access the attributes and methods of the class in python
+        :return: None
+        """
         log.debug("Creating Pyrogram Client object")
         self.app = Client(
             api_hash=self.parameters.api_hash,
@@ -49,7 +53,14 @@ class App:
         modules.load(self.app)
 
     def run(self) -> None:
-        """Runs the Pyrogram's Client. Same as Pyrogram's run() method."""
+        """
+        The run function is the main entry point for the client. It is responsible
+        for initializing and running the application, as well as handling any errors
+        that may occur during execution.
+
+        :param self: Access the attributes and methods of the class inside a method
+        :return: None
+        """
         if self.app is None:
             raise RuntimeError("App is not initialized!")
 

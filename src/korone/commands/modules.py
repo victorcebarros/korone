@@ -31,7 +31,14 @@ MODULES: list[Module] = [
 
 
 def get_commands(module: ModuleType) -> Iterable[FunctionType]:
-    """Get commands from a module."""
+    """
+    The get_commands function takes a module and returns an iterable of functions
+    that have been decorated with the @handler decorator. This function is used to
+    determine which commands are available for use by the client.
+
+    :param module:ModuleType: Get the module that contains the function
+    :return: An iterable of functions that have a `handlers` attribute
+    """
     functions = filter(
         inspect.isfunction, map(lambda var: getattr(module, var), vars(module))
     )
@@ -39,7 +46,17 @@ def get_commands(module: ModuleType) -> Iterable[FunctionType]:
 
 
 def load(app: Client) -> None:
-    """Loads commands after initialization."""
+    """
+    The load function is responsible for loading all of the modules in
+    the modules package. It does this by iterating over a list of module
+    names, and importing each one. The load function then calls the get_commands
+    method on each module to retrieve a list of commands that are present in it. If any
+    of these commands have handlers attached to them, they are added to the client's handler
+    list using add_handler.
+
+    :param app:Client: Call the load function
+    :return: None
+    """
     if app is None:
         log.critical("Pyrogram's Client app has not been initialized!")
         log.critical("User attempted to load commands before init.")
@@ -60,6 +77,14 @@ def load(app: Client) -> None:
         commands: Iterable[FunctionType] = get_commands(component)
 
         def add(command: FunctionType) -> bool:
+            """
+            The add function adds a command to the bot.
+            It takes in a function, and then for each handler that is associated with it, adds it to the bot.
+            The add function returns True if successful or False if unsuccessful.
+
+            :param command:FunctionType: Specify the command that is being added
+            :return: True if the command was loaded successfully, false otherwise
+            """
             successful: bool = False
             for handler, group in command.handlers:  # type: ignore
                 if isinstance(handler, Handler) and isinstance(group, int):

@@ -11,8 +11,14 @@ log = logging.getLogger(__name__)
 
 
 def main(argv: list[str]) -> int:
-    """Entry point."""
+    """
+    The main function is the entry point for the program.
 
+    It creates a new instance of an App object and runs it.
+
+    :param argv:list[str]: Pass command line arguments to the program
+    :return: The number of arguments passed to it
+    """
     log.info("Program started")
 
     config.init("korone.conf")

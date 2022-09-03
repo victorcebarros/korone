@@ -60,14 +60,39 @@ class Manager(ABC, Generic[T]):
 
     @abstractmethod
     def insert(self, item: T) -> None:
-        """Inserts item to Database."""
+        """
+        The insert function inserts an item into the list.
+
+        :param self: Refer to the current instance of the class
+        :param item:T: Specify the type of data that is being inserted into the list
+        :return: The item that was inserted into the list
+        """
 
     @abstractmethod
     def cast(self, row: Row) -> T:
-        """Casts row to T type."""
+        """
+        The cast function is used to convert a row into the desired type.
+        It is called by the constructor of an ABC, and it must be overridden in all subclasses.
+        The cast function takes a single argument: self, which is an instance of the subclass that needs casting.
+        The cast function returns a value of type T.
+
+        :param self: Access the attributes and methods of the class
+        :param row:Row: Indicate the row that is being casted
+        :return: The row as a dictionary
+        """
 
     def query(self, search: Cell, relation: Relation = Relation.EQ) -> Iterable[T]:
-        """Queries item from database."""
+        """
+        The query function is a method of the Manager class. It takes in a search
+        cell and an optional relation, and returns all rows from the database that
+        match that search cell. The relation defaults to Relation.Equals if it is not
+        specified.
+
+        :param self: Access the class attributes
+        :param search:Cell: Search for a specific value in the database
+        :param relation:Relation=Relation.EQ: Specify the type of query
+        :return: An iterable of all the objects that match the search
+        """
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
 
@@ -86,7 +111,17 @@ class Manager(ABC, Generic[T]):
     def update(
         self, update: Cell, condition: Cell, relation: Relation = Relation.EQ
     ) -> None:
-        """Updates item on database."""
+        """
+        The update function is a method of the Manager class. It takes in a update
+        cell and a condition cell and an optional relation, and updates all rows from
+        the database with that.
+
+        :param self: Refer to the object itself
+        :param update:Cell: Update the column specified by the update:cell parameter with data from another cell
+        :param condition:Cell: Specify the condition for which a row should be updated
+        :param relation:Relation=Relation.EQ: Specify the type of comparison to be used
+        :return: None
+        """
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
 
@@ -100,7 +135,17 @@ class Manager(ABC, Generic[T]):
         )
 
     def delete(self, condition: Cell, relation: Relation = Relation.EQ) -> None:
-        """Deletes item from the database."""
+        """
+        The delete function is used to delete a row from the database.
+        It takes in two parameters, self and condition.
+        The parameter self is required for all functions that are part of the Manager class.
+        The parameter condition is a Cell object which contains information about what data should be deleted from the table.
+
+        :param self: Refer to the object itself
+        :param condition:Cell: Specify the column and value to be used in the delete statement
+        :param relation:Relation=Relation.EQ: Specify the type of comparison that should be performed
+        :return: None
+        """
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
 
@@ -114,7 +159,13 @@ class Manager(ABC, Generic[T]):
         )
 
     def valid(self) -> bool:
-        """Returns whether or not the instance is in a valid state."""
+        """
+        The valid function returns True if the table and columns are not empty.
+        Otherwise, it returns False.
+
+        :param self: Access the attributes and methods of the class
+        :return: A boolean value
+        """
         return not (self.table == "" or not self.columns)
 
 
@@ -132,7 +183,15 @@ class ChatManager(Manager[Chat]):
         }
 
     def insert(self, item: Chat) -> None:
-        """Inserts item to Database."""
+        """
+        The insert function inserts a new chat into the database.
+        It accepts an item, which is expected to be of type Chat.
+        If the item has no id, then it will raise a RuntimeError.
+
+        :param self: Access the class attributes
+        :param item:Chat: Pass the chat object to the insert function
+        :return: None
+        """
         if item.id is None:
             raise RuntimeError("chat must not be None!")
 
@@ -148,7 +207,14 @@ class ChatManager(Manager[Chat]):
         )
 
     def cast(self, row: Row) -> Chat:
-        """Casts Row object to Chat object."""
+        """
+        The cast function takes a row from the database and returns a Chat object.
+        The cast function is used to convert rows from the database into objects of type Chat.
+
+        :param self: Access the class attributes
+        :param row:Row: Access the values in the row
+        :return: A chat object with the values from the row
+        """
         chat: Chat = Chat(
             id=row[self.columns[Column.UUID]], type=row[self.columns[Column.CHATTYPE]]
         )
@@ -173,8 +239,16 @@ class UserManager(Manager[User]):
         }
 
     def insert(self, item: User) -> None:
-        """Inserts User to Database."""
+        """
+        The insert function inserts a new user into the database.
+        It takes two arguments: item and self.
+        item is the user to be inserted, which must have an id attribute set.
+        self is the table object that contains this function.
 
+        :param self: Access the attributes and methods of the class in python
+        :param item:User: Tell the function what type of data it is expecting
+        :return: None
+        """
         if item.id is None:
             raise RuntimeError("item.id must not be None!")
 
@@ -188,6 +262,15 @@ class UserManager(Manager[User]):
         )
 
     def cast(self, row: Row) -> User:
+        """
+        The cast function is a helper function that takes in a row and returns
+        a User object. It is used by the Database class to convert rows into
+        User objects.
+
+        :param self: Access the class attributes
+        :param row:Row: Access the values in the row
+        :return: A user object
+        """
         user: User = User(
             id=row[self.columns[Column.UUID]],
             language_code=row[self.columns[Column.LANGUAGE]],

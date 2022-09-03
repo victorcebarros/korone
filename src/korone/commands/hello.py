@@ -12,7 +12,12 @@ log = logging.getLogger(__name__)
 
 
 def get_language_code(message: Message) -> str:
-    """Gets language code from message."""
+    """
+    The get_language_code function takes a message object as an argument and returns the language code of the user who sent that message. If no language code is found, it defaults to "en" (English).
+
+    :param message:Message: Get the message that was sent by the user
+    :return: The language code of the user that sends a message
+    """
     language_code: str = "en"
     if message.from_user is None:
         return language_code
