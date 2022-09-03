@@ -68,7 +68,7 @@ class Manager(ABC, Generic[T]):
         The insert function inserts an item into the list.
 
         :param self: Refer to the current instance of the class
-        :param item:T: Specify the type of data that is being inserted into the list
+        :param item:T: Type of data and the item that is being inserted into the database.
         :return: The item that was inserted into the list
         """
 
@@ -76,9 +76,6 @@ class Manager(ABC, Generic[T]):
     def cast(self, row: Row) -> T:
         """
         The cast function is used to convert a row into the desired type.
-        It is called by the constructor of an ABC, and it must be overridden in all subclasses.
-        The cast function takes a single argument: self, which is an instance of the subclass that needs casting.
-        The cast function returns a value of type T.
 
         :param self: Access the attributes and methods of the class
         :param row:Row: Indicate the row that is being casted
@@ -190,7 +187,8 @@ class ChatManager(Manager[Chat]):
         """
         The insert function inserts a new chat into the database.
         It accepts an item, which is expected to be of type Chat.
-        If the item has no id, then it will raise a RuntimeError.
+        If improperly initialized Chat Objects, then it will raise
+        a RuntimeError.
 
         :param self: Access the class attributes
         :param item:Chat: Pass the chat object to the insert function
@@ -246,7 +244,7 @@ class UserManager(Manager[User]):
         """
         The insert function inserts a new user into the database.
         It takes two arguments: item and self.
-        item is the user to be inserted, which must have an id attribute set.
+        item is the user to be inserted, it must be a properly initialized User object.
         self is the table object that contains this function.
 
         :param self: Access the attributes and methods of the class in python

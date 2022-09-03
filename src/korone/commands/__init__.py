@@ -31,6 +31,8 @@ class AppParameters:
 
 
 class App:
+    """Handles Pyrogram's Client and Korone's Database."""
+
     def __init__(self, parameters: AppParameters):
         self.app: Client | None = None
         self.parameters: AppParameters = parameters
