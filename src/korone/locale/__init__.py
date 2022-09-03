@@ -21,7 +21,14 @@ class StringResource:
 
     @classmethod
     def load(cls, language_code: str) -> dict[str, str]:
-        """Loads language to cache."""
+        """
+        The load function loads a language pack for the specified language code.
+        If the file does not exist, it will load English instead.
+
+        :param cls: Access the class variables of languagepackloader
+        :param language_code:str: Specify the language code of the
+        :return: A dictionary of the language strings
+        """
         if language_code in cls.languages:
             return cls.languages[language_code]
 
@@ -47,7 +54,17 @@ class StringResource:
 
     @classmethod
     def get(cls, language_code: str, resource: str, default: str = "") -> str:
-        """Returns locale-specific resource for a given language."""
+        """
+        The get function is a helper function that retrieves the string from
+        the resource file. If it is not found, then it will attempt to retrieve
+        it from the English resource file. If that fails, then it returns the default.
+
+        :param cls: Call the load function from the class
+        :param language_code:str: Specify the language of the string that is being looked up
+        :param resource:str: Specify the resource that is being loaded
+        :param default:str="": Set a default value if the resource is not found
+        :return: The string at the given resource
+        """
         string: str
 
         try:
