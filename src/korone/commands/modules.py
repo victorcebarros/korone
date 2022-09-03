@@ -51,12 +51,8 @@ def get_commands(module: ModuleType) -> Iterable[FunctionType]:
 
 def load(app: Client) -> None:
     """
-    The load function is responsible for loading all of the modules in
-    the modules package. It does this by iterating over a list of module
-    names, and importing each one. The load function then calls the get_commands
-    method on each module to retrieve a list of commands that are present in it. If any
-    of these commands have handlers attached to them, they are added to the client's handler
-    list using add_handler.
+    The load function is responsible for loading
+    all of the modules in the modules package.
 
     :param app:Client: Call the load function
     :return: None

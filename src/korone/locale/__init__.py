@@ -30,7 +30,7 @@ class StringResource:
         If the file does not exist, it will load English instead.
 
         :param cls: Access the class variables of languagepackloader
-        :param language_code:str: Specify the language code of the
+        :param language_code:str: Specify the language code to load
         :return: A dictionary of the language strings
         """
         if language_code in cls.languages:

@@ -27,7 +27,7 @@ class Database:
     @classmethod
     def isopen(cls):
         """
-        The isopen function is a decorator that is used to mark classes as having an open connection.
+        The isopen function is a class method that is used to mark class as having an open connection.
         It's purpose is to make sure that the connection isn't closed before the class' __del__ method
         is called, which would close the database connection.
 
@@ -87,17 +87,17 @@ class Database:
     @classmethod
     def execute(cls, sql: str, parameters: tuple = (), /) -> Cursor:
         """
-        The execute function is a class method of the Connection class. It is used to execute SQL statements on the database
-        connection that was opened by the connect function. The sql argument should be a string containing an SQL statement, and
-        the parameters argument should be a tuple of values for each parameter in the query. This function returns an instance
-        of Cursor, which can then be used to iterate over results from this statement.
+        The execute function is a class method of the Connection class. It is
+        used to execute SQL statements on the database connection that was
+        opened by the connect function.
 
-        :param cls: Pass the class object to the function
-        :param sql:str: Pass in the sql statement to be executed
-        :param parameters:tuple=(): Pass in a tuple of arguments to the sql statement
-        :param /: Tell the function that it is not required
-        :return: A cursor object
+        :param cls: Make sure that the database is open
+        :param sql:str: Pass in the sql statement that you want to execute
+        :param parameters:tuple=(): Pass a tuple of arguments to the sql statement
+        :param /: Indicate that the function has a variable number of parameters
+        :return: The cursor object
         """
+
         if not cls.isopen():
             raise DatabaseError("Database is not yet connected!")
 
