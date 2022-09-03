@@ -1,3 +1,7 @@
+"""
+Custom Pyrogram modules system that loads modules from the modules package.
+"""
+
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
