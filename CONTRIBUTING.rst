@@ -86,7 +86,7 @@ bunch of unrelated changes in a single commit.
 Version Numbering
 -----------------
 
-We use SEMVER, refer to `semver link`_ for more detailed information.
+We use SEMVER, refer to `semver.org`_ for more detailed information.
 
 .. _git: https://git-scm.com/
 .. _PEP8 Style Guide: https://www.python.org/dev/peps/pep-0008/
