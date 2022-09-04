@@ -9,8 +9,8 @@ from faker import Faker
 from pyrogram.types import User
 from pytest import fixture
 
-from src.korone.database import Database
-from src.korone.database.manager import Clause, Column, UserManager
+from korone.database import Database
+from korone.database.manager import Clause, Column, UserManager
 
 Database.connect("korone-test.db")
 Database.setup()
