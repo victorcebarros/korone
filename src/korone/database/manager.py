@@ -31,8 +31,8 @@ class Column(Enum):
     STATE = auto()
 
 
-class Relation(Enum):
-    """Relations for WHERE clause on SQL Statement."""
+class Operator(Enum):
+    """Operator to be applied in a clause on a SQL Statement."""
 
     LT = "<"
     EQ = "="
@@ -40,13 +40,17 @@ class Relation(Enum):
     LE = "<="
     GE = ">="
 
+    def __str__(self) -> str:
+        return str(self.value)
+
 
 @dataclass
-class Cell:
+class Clause:
     """Data for a single cell in a row."""
 
     column: Column
-    data: Any
+    data: Any = None
+    operator: Operator = Operator.EQ
 
 
 T = TypeVar("T")
@@ -84,45 +88,41 @@ class Manager(ABC, Generic[T]):
         :return: The row as a dictionary
         """
 
-    def query(self, search: Cell, relation: Relation = Relation.EQ) -> Iterable[T]:
+    def query(self, search: Clause) -> Iterable[T]:
         """
         The query function is a method of the Manager class. It takes in a search
         cell and an optional relation, and returns all rows from the database that
         match that search cell. The relation defaults to Relation.Equals if it is not
         specified.
 
-        :param self: Access the class attributes
-        :param search:Cell: Search for a specific value in the database
-        :param relation:Relation=Relation.EQ: Specify the type of query
-        :return: An iterable of all the objects that match the search
+        :param self: Self
+        :param search:Clause: Search Clause
+        :return: An iterable with all the objects that match the query
         """
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
 
-        if search.data is None or search.data == "":
+        if search.data is None:
             return map(self.cast, self.database.execute(f"SELECT * FROM {self.table}"))
 
         column: str = self.columns[search.column]
         return map(
             self.cast,
             self.database.execute(
-                f"SELECT * FROM {self.table} WHERE {column} {relation.value} ?",
+                f"SELECT * FROM {self.table} WHERE {column} {search.operator} ?",
                 (search.data,),
             ),
         )
 
-    def update(
-        self, update: Cell, condition: Cell, relation: Relation = Relation.EQ
-    ) -> None:
+    def update(self, update: Clause, condition: Clause) -> None:
         """
         The update function is a method of the Manager class. It takes in a update
         cell and a condition cell and an optional relation, and updates all rows from
         the database with that.
 
-        :param self: Refer to the object itself
-        :param update:Cell: Update the column specified by the update:cell parameter with data from another cell
-        :param condition:Cell: Specify the condition for which a row should be updated
-        :param relation:Relation=Relation.EQ: Specify the type of comparison to be used
+        :param self: Self
+        :param update:Clause: Column to be updated
+        :param condition:Clause: Condition to match the rows
         :return: None
         """
         if not self.valid():
@@ -133,20 +133,16 @@ class Manager(ABC, Generic[T]):
 
         self.database.execute(
             f"UPDATE {self.table} SET {self.columns[update.column]} = ? "
-            f"WHERE {self.columns[condition.column]} {relation.value} ?",
+            f"WHERE {self.columns[condition.column]} {condition.operator} ?",
             (update.data, condition.data),
         )
 
-    def delete(self, condition: Cell, relation: Relation = Relation.EQ) -> None:
+    def delete(self, condition: Clause) -> None:
         """
-        The delete function is used to delete a row from the database.
-        It takes in two parameters, self and condition.
-        The parameter self is required for all functions that are part of the Manager class.
-        The parameter condition is a Cell object which contains information about what data should be deleted from the table.
+        The delete function is used to delete rows from the database.
 
-        :param self: Refer to the object itself
-        :param condition:Cell: Specify the column and value to be used in the delete statement
-        :param relation:Relation=Relation.EQ: Specify the type of comparison that should be performed
+        :param self: Self
+        :param condition:Clause: Condition to match the rows
         :return: None
         """
         if not self.valid():
@@ -157,7 +153,7 @@ class Manager(ABC, Generic[T]):
 
         self.database.execute(
             f"DELETE FROM {self.table} WHERE "
-            f"{self.columns[condition.column]} {relation.value} ?",
+            f"{self.columns[condition.column]} {condition.operator} ?",
             (condition.data,),
         )
 
