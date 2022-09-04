@@ -27,6 +27,8 @@ class Column(Enum):
     LANGUAGE = auto()
     REGISTRYDATE = auto()
     CHATTYPE = auto()
+    COMMAND = auto()
+    STATE = auto()
 
 
 class Relation(Enum):
@@ -281,3 +283,48 @@ class UserManager(Manager[User]):
         user.registrydate = row[self.columns[Column.REGISTRYDATE]]  # type: ignore
 
         return user
+
+
+@dataclass
+class Command:
+    """Simple command structure."""
+
+    command: str
+    chat_id: int
+    state: bool
+
+
+class CommandManager(Manager[Command]):
+    """Command manager for database."""
+
+    def __init__(self, database: Database):
+        super().__init__(database)
+
+        self.table: str = "DisabledCommands"
+        self.columns: dict[Column, str] = {
+            Column.UUID: "chat_uuid",
+            Column.COMMAND: "command",
+            Column.STATE: "state",
+        }
+
+    def insert(self, item: Command) -> None:
+        if item.chat_id is None:
+            raise RuntimeError("item.chat_id must not be None!")
+
+        columns: str = (
+            f"{self.columns[Column.UUID]}, "
+            f"{self.columns[Column.COMMAND]}, "
+            f"{self.columns[Column.STATE]}"
+        )
+
+        self.database.execute(
+            f"INSERT INTO {self.table} ({columns}) VALUES (?, ?, ?)",
+            (item.chat_id, item.command, item.state)
+        )
+
+    def cast(self, row: Row) -> Command:
+        return Command(
+            command=row[self.columns[Column.COMMAND]],
+            chat_id=row[self.columns[Column.UUID]],
+            state=bool(row[self.columns[Column.STATE]]),
+        )

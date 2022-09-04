@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS Chats (
 
 CREATE TABLE IF NOT EXISTS DisabledCommands (
     chat_uuid INTEGER,
-    disabled_commands TEXT
+    command TEXT,
+    state BIT
 );
 
 CREATE TABLE IF NOT EXISTS Filters (
