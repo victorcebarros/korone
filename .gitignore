@@ -1,6 +1,16 @@
 __pycache__/
 *.py[cod]
 
-dist/
-
 .mypy_cache/
+
+dist/
+*.egg-info/
+
+downloads/
+korone.conf
+*.session*
+*.db*
+
+venv/
+
+.vscode
