@@ -48,12 +48,3 @@ def cleanup(request):
         Database.execute("DROP TABLE users;") #removes all data in user
         Database.close()
 
-@fixture(scope="session", autouse=True)
-def cleanup(request):
-    """Cleans and closes database."""
-
-    def drop_and_close():
-        Database.execute("DROP TABLE users;")  # removes all data in user
-        Database.close()
-
-    request.addfinalizer(drop_and_close)
