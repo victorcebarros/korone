@@ -11,13 +11,7 @@ import sys
 from korone import constants
 from korone.main import main
 
-LEVEL: int = logging.INFO
-
-
-if "--debug" in sys.argv:
-    LEVEL = logging.DEBUG
-
-
+LEVEL = logging.DEBUG if "--debug" in sys.argv else logging.INFO
 logging.basicConfig(
     format=constants.LOGGER_FORMAT_OUTPUT,
     level=LEVEL,

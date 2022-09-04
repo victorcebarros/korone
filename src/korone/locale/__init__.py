@@ -38,7 +38,7 @@ class StringResource:
 
         log.info("Loading language locale for %s", language_code)
 
-        langpack: str = path.join(cls.dirpath, language_code + ".yaml")
+        langpack: str = path.join(cls.dirpath, f"{language_code}.yaml")
 
         if not path.isfile(langpack):
             return cls.load("en")

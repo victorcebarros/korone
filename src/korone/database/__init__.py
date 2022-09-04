@@ -50,7 +50,7 @@ class Database:
         if cls.isopen():
             raise DatabaseError("Database is already connected!")
 
-        if path.strip() == "":
+        if not path.strip():
             path = constants.DEFAULT_DBFILE_PATH
 
         cls.path = path

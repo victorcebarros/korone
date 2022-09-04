@@ -38,7 +38,7 @@ def init(cfgpath: str = "") -> None:
     :param cfgpath:str="": Specify a custom path to the config file
     :return: None
     """
-    if cfgpath == "":
+    if not cfgpath:
         cfgpath = constants.DEFAULT_CONFIG_PATH
 
     dirname: str = path.dirname(cfgpath)
