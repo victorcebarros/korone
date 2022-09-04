@@ -7,7 +7,7 @@ from faker import Faker
 from pyrogram.types import User
 
 from src.korone.database import Database
-from src.korone.database.manager import UserManager, Cell, Column
+from src.korone.database.manager import UserManager, Clause, Column
 
 from pytest import fixture
 
@@ -25,7 +25,7 @@ class TestUserManager:
 
         user = TestUserManager.random_user()
         usermgr.insert(user)
-        query = list(usermgr.query(Cell(Column.UUID, user.id)))
+        query = list(usermgr.query(Clause(Column.UUID, user.id)))
 
         assert len(query) == 1
 
