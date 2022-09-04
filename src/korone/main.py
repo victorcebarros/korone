@@ -27,10 +27,7 @@ def main(argv: list[str]) -> int:
 
     config.init("korone.conf")
 
-    ipv6: bool = False
-
-    if config.get("pyrogram", "USE_IPV6").lower() in ("yes", "true", "1"):
-        ipv6 = True
+    ipv6 = config.get("pyrogram", "USE_IPV6").lower() in ("yes", "true", "1")
 
     Database.connect("korone.db")
     Database.setup()
