@@ -1,15 +1,16 @@
-"""Korone is a simple multipurpose Telegram Bot.
-This is a complete rewrite of PyKorone, refer to
-https://github.com/AmanoTeam/PyKorone and README.md for more
-information."""
+"""
+Tests for the user manager.
+"""
+
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2022 hytalo-bassi <https://github.com/hytalo-bassi>
 
 from faker import Faker
 from pyrogram.types import User
-
-from src.korone.database import Database
-from src.korone.database.manager import UserManager, Clause, Column
-
 from pytest import fixture
+
+from korone.database import Database
+from korone.database.manager import Clause, Column, UserManager
 
 Database.connect("korone-test.db")
 Database.setup()
@@ -41,15 +42,6 @@ class TestUserManager:
         username = fake.user_name()
 
         return User(id=id, first_name=first_name, username=username)
-
-
-@fixture(scope="session", autouse=True)
-def cleanup(request):
-    """Cleans and closes database."""
-
-    def drop_and_close():
-        Database.execute("DROP TABLE users;")  # removes all data in user
-        Database.close()
 
 
 @fixture(scope="session", autouse=True)

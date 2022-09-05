@@ -1,4 +1,5 @@
-# Reporting bugs
+Reporting bugs
+==============
 
 Prior to creating an issue on GitHub, please check that:
 
@@ -15,24 +16,27 @@ When creating a bug report, you should:
 - Explain how to reproduce the issue.
 - Provide logs / backtraces, excluding personal information.
 
-
-# How to contribute
+How to contribute
+=================
 
 There are some basic guidelines you need to understand in order to keep the codebase
 consistent and well coordinated.
 
-## Getting started
+Getting started
+---------------
 
-- You should have a basic understanding of [git](https://git-scm.com/).
+- You should have a basic understanding of `git`_.
 
-## Coding Style
+Coding Style
+------------
 
-- Follow the [PEP8 Style Guide](https://peps.python.org/pep-0008).
-- Use docstrings in a concise and cohesive manner, with [pydoc](https://docs.python.org/3/library/pydoc.html) in mind.
-- Use [Type Annotations](https://docs.python.org/3/library/typing.html).
+- Follow the `PEP8 Style Guide`_.
+- Use docstrings in a concise and cohesive manner, with `pydoc`_ in mind.
+- Use `Type Annotations`_.
 - Before submitting a new PR, run the tests.
 
-## Commit messages
+Commit messages
+---------------
 
 To maintain consistency, it is important to abide by the following style directives:
 
@@ -45,32 +49,47 @@ To maintain consistency, it is important to abide by the following style directi
 
 For the commit types, the following table will help you decide which one you should use:
 
++-------------+--------------------------+
 | Commit Type | Description              |
-| ----------- | ------------------------ |
++=============+==========================+
 | Chore       | Regular code maintenance |
++-------------+--------------------------+
 | Docs        | Documentation            |
++-------------+--------------------------+
 | Feat        | New features             |
++-------------+--------------------------+
 | Fix         | Bugfixes                 |
++-------------+--------------------------+
 | Refactor    | Refactoring              |
++-------------+--------------------------+
 | Style       | Style related changes    |
++-------------+--------------------------+
 | Test        | Code testing             |
++-------------+--------------------------+
 
 For example, instead of doing this:
-```
-behavior y for function x has been fixed.
-```
+
+``behavior y for function x has been fixed.``
+
 Do this:
-```
-Fix: Corrects behavior y from funciton x
-```
+
+``Fix: Corrects behavior y from funciton x``
 
 Commits prior to this guideline will be kept, but new commits should follow these recommendations.
 
-## Committing changes
+Committing changes
+------------------
 
 You should try to make commits of logical units, in order to prevent making a
 bunch of unrelated changes in a single commit.
 
-## Version Numbering
+Version Numbering
+-----------------
 
-We use SEMVER, refer to [semver.org](https://semver.org) for more detailed information.
+We use SEMVER, refer to `semver.org`_ for more detailed information.
+
+.. _git: https://git-scm.com/
+.. _PEP8 Style Guide: https://www.python.org/dev/peps/pep-0008/
+.. _pydoc: https://docs.python.org/3/library/functions.html#pydoc
+.. _Type Annotations: https://www.python.org/dev/peps/pep-0484/
+.. _semver.org: https://semver.org/

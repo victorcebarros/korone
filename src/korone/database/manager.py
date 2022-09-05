@@ -304,6 +304,15 @@ class CommandManager(Manager[Command]):
         }
 
     def insert(self, item: Command) -> None:
+        """
+        The insert function inserts a new item into the database.
+        It accepts an item as its parameter, and returns None.
+        The insert function raises RuntimeError if the chat_id of the given item is None.
+
+        :param self: Access the class attributes
+        :param item:Command: Tell the database what kind of data is going to be inserted
+        :return: None
+        """
         if item.chat_id is None:
             raise RuntimeError("item.chat_id must not be None!")
 
@@ -319,6 +328,15 @@ class CommandManager(Manager[Command]):
         )
 
     def cast(self, row: Row) -> Command:
+        """
+        The cast function is a helper function that converts the row object into
+        a Command object. This is necessary because the database returns rows as
+        tuples, but we want to work with objects.
+
+        :param self: Reference the class object
+        :param row:Row: Access the values in the row
+        :return: A command object
+        """
         return Command(
             command=row[self.columns[Column.COMMAND]],
             chat_id=row[self.columns[Column.UUID]],
