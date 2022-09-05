@@ -44,13 +44,64 @@ class Operator(Enum):
         return str(self.value)
 
 
+class BaseClause(ABC):
+    """Base Clause for all Clauses."""
+    def __and__(self, other):
+        return AndClause(self, other)
+
+    def __or__(self, other):
+        return OrClause(self, other)
+
+    def __invert__(self):
+        return InvertClause(self)
+
+    @abstractmethod
+    def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        """Evaluates SQL Clauses"""
+
 @dataclass
-class Clause:
-    """Data for a single cell in a row."""
+class Clause(BaseClause):
+    """Single SQL Clause."""
 
     column: Column
     data: Any = None
     operator: Operator = Operator.EQ
+
+    def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        return f"{columns[self.column]} {self.operator} ?", (self.data,)
+
+
+class AndClause(BaseClause):
+    def __init__(self, base: Clause, other: Clause):
+        self.base = base
+        self.other = other
+
+    def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        bclause, bdata = self.base.eval(columns)
+        oclause, odata = self.other.eval(columns)
+        return f"({bclause} AND {oclause})", (*bdata, *odata)
+
+
+class OrClause(BaseClause):
+    def __init__(self, base: Clause, other: Clause):
+        self.base = base
+        self.other = other
+
+    def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        bclause, bdata = self.base.eval(columns)
+        oclause, odata = self.other.eval(columns)
+        return f"({bclause} OR {oclause})", (*bdata, *odata)
+
+
+class InvertClause(BaseClause):
+    """NOT Clause."""
+
+    def __init__(self, base: Clause):
+        self.base = base
+
+    def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        bclause, bdata = self.base.eval(columns)
+        return f"(NOT {bclause})", (*bdata,)
 
 
 T = TypeVar("T")
@@ -105,12 +156,13 @@ class Manager(ABC, Generic[T]):
         if search.data is None:
             return map(self.cast, self.database.execute(f"SELECT * FROM {self.table}"))
 
-        column: str = self.columns[search.column]
+        clause, data = search.eval(self.columns)
+
         return map(
             self.cast,
             self.database.execute(
-                f"SELECT * FROM {self.table} WHERE {column} {search.operator} ?",
-                (search.data,),
+                f"SELECT * FROM {self.table} WHERE {clause}",
+                data
             ),
         )
 
@@ -131,10 +183,12 @@ class Manager(ABC, Generic[T]):
         if condition.data is None or condition.data == "":
             raise AttributeError("Condition data can't be empty!")
 
+        uclause, udata = update.eval(self.columns)
+        cclause, cdata = condition.eval(self.columns)
+
         self.database.execute(
-            f"UPDATE {self.table} SET {self.columns[update.column]} = ? "
-            f"WHERE {self.columns[condition.column]} {condition.operator} ?",
-            (update.data, condition.data),
+            f"UPDATE {self.table} SET {uclause} WHERE {cclause}",
+            (*udata, *cdata),
         )
 
     def delete(self, condition: Clause) -> None:
@@ -151,10 +205,11 @@ class Manager(ABC, Generic[T]):
         if condition.data is None or condition.data == "":
             raise AttributeError("Condition data can't be empty!")
 
+        clause, data = condition.eval(self.columns)
+
         self.database.execute(
-            f"DELETE FROM {self.table} WHERE "
-            f"{self.columns[condition.column]} {condition.operator} ?",
-            (condition.data,),
+            f"DELETE FROM {self.table} WHERE {clause}",
+            data
         )
 
     def valid(self) -> bool:
