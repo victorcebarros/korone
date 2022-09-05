@@ -315,7 +315,7 @@ class CommandManager(Manager[Command]):
 
         self.database.execute(
             f"INSERT INTO {self.table} ({columns}) VALUES (?, ?, ?)",
-            (item.chat_id, item.command, item.state)
+            (item.chat_id, item.command, item.state),
         )
 
     def cast(self, row: Row) -> Command:

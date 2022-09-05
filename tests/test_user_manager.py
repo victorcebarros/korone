@@ -17,6 +17,7 @@ Database.setup()
 
 class TestUserManager:
     """Tests the management of user in database"""
+
     user_manager = UserManager(Database())
 
     def test_insert_and_query(self):
@@ -41,12 +42,15 @@ class TestUserManager:
 
         return User(id=id, first_name=first_name, username=username)
 
+
 @fixture(scope="session", autouse=True)
 def cleanup(request):
     """Cleans and closes database."""
+
     def drop_and_close():
-        Database.execute("DROP TABLE users;") #removes all data in user
+        Database.execute("DROP TABLE users;")  # removes all data in user
         Database.close()
+
 
 @fixture(scope="session", autouse=True)
 def cleanup(request):
