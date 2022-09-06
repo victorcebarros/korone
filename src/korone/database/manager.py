@@ -141,7 +141,7 @@ class Manager(ABC, Generic[T]):
         :return: The row as a dictionary
         """
 
-    def query(self, search: Clause) -> Iterable[T]:
+    def query(self, search: Clause | None = None) -> Iterable[T]:
         """
         The query function is a method of the Manager class. It takes a Clause
         as an argument. If search is None, it returns all rows in the table.
