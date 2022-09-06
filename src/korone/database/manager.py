@@ -46,6 +46,7 @@ class Operator(Enum):
 
 class BaseClause(ABC):
     """Base Clause for all Clauses."""
+
     def __and__(self, other):
         return AndClause(self, other)
 
@@ -58,6 +59,7 @@ class BaseClause(ABC):
     @abstractmethod
     def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
         """Evaluates SQL Clauses"""
+
 
 @dataclass
 class Clause(BaseClause):
@@ -141,10 +143,8 @@ class Manager(ABC, Generic[T]):
 
     def query(self, search: Clause) -> Iterable[T]:
         """
-        The query function is a method of the Manager class. It takes in a search
-        cell and an optional relation, and returns all rows from the database that
-        match that search cell. The relation defaults to Relation.Equals if it is not
-        specified.
+        The query function is a method of the Manager class. It takes a Clause
+        as an argument. If search is None, it returns all rows in the table.
 
         :param self: Self
         :param search:Clause: Search Clause
@@ -153,24 +153,21 @@ class Manager(ABC, Generic[T]):
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
 
-        if search.data is None:
+        if search is None:
             return map(self.cast, self.database.execute(f"SELECT * FROM {self.table}"))
 
         clause, data = search.eval(self.columns)
 
         return map(
             self.cast,
-            self.database.execute(
-                f"SELECT * FROM {self.table} WHERE {clause}",
-                data
-            ),
+            self.database.execute(f"SELECT * FROM {self.table} WHERE {clause}", data),
         )
 
     def update(self, update: Clause, condition: Clause) -> None:
         """
-        The update function is a method of the Manager class. It takes in a update
-        cell and a condition cell and an optional relation, and updates all rows from
-        the database with that.
+        The update function is a method of the Manager class. It takes an update Clause,
+        which tells which columns should be updated. It also takes a condition clause,
+        which matches the rows it should update.
 
         :param self: Self
         :param update:Clause: Column to be updated
@@ -202,15 +199,12 @@ class Manager(ABC, Generic[T]):
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
 
-        if condition.data is None or condition.data == "":
+        if condition is None or condition.data is None or condition.data == "":
             raise AttributeError("Condition data can't be empty!")
 
         clause, data = condition.eval(self.columns)
 
-        self.database.execute(
-            f"DELETE FROM {self.table} WHERE {clause}",
-            data
-        )
+        self.database.execute(f"DELETE FROM {self.table} WHERE {clause}", data)
 
     def valid(self) -> bool:
         """
@@ -397,3 +391,33 @@ class CommandManager(Manager[Command]):
             chat_id=row[self.columns[Column.UUID]],
             state=bool(row[self.columns[Column.STATE]]),
         )
+
+    def toggle(self, command: str, chat_id: int, state: bool) -> None:
+        """Toggles command state."""
+        query = Clause(Column.COMMAND, command) & Clause(Column.UUID, chat_id)
+        result = list(self.query(query))
+
+        if len(result) < 1:
+            self.insert(Command(command=command, chat_id=chat_id, state=state))
+            return
+
+        self.update(Clause(Column.STATE, state), query)
+
+    def enable(self, command: str, chat_id: int) -> None:
+        """Enables command."""
+        self.toggle(command, chat_id, True)
+
+    def disable(self, command: str, chat_id: int) -> None:
+        """Disables command."""
+        self.toggle(command, chat_id, False)
+
+    def is_enabled(self, command: str, chat_id: int) -> bool:
+        """Returns True if enabled, False otherwise."""
+        query = Clause(Column.COMMAND, command) & Clause(Column.UUID, chat_id)
+
+        result = list(self.query(query))
+
+        if len(result) < 1:
+            return True
+
+        return result[0].state
