@@ -141,7 +141,7 @@ class Manager(ABC, Generic[T]):
         The cast function is used to convert a row into the desired type.
 
         :param row: Indicate the row that is being casted
-        :type row: Row
+        :type row: SQLite3.Row
         :return: The row as a dictionary
         :rtype: T
         """
@@ -268,7 +268,7 @@ class ChatManager(Manager[Chat]):
         The cast function is used to convert rows from the database into objects of type Chat.
 
         :param row: Access the values in the row
-        :type row: Row
+        :type row: SQLite3.Row
         :return: A chat object with the values from the row
         :rtype: Chat
         """
@@ -325,7 +325,7 @@ class UserManager(Manager[User]):
         User objects.
 
         :param row: Access the values in the row
-        :type row: Row
+        :type row: SQLite3.Row
         :return: A user object
         :rtype: User
         """
@@ -392,7 +392,7 @@ class CommandManager(Manager[Command]):
         tuples, but we want to work with objects.
 
         :param row: Access the values in the row
-        :type row: Row
+        :type row: SQLite3.Row
         :return: A command object
         :rtype: Command
         """
