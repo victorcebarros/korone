@@ -12,8 +12,9 @@ def traverse(tree: Union[dict, list], path: str, separator: str = "/") -> Any:
     """
     The traverse function takes a tree and a path, and returns the value at that
     path. The tree can be either a list or dictionary, but the path must be valid
-    for that type of tree. For example:
+    for that type of tree.
 
+    Example:
         .. code-block:: python
 
             >>> root = {

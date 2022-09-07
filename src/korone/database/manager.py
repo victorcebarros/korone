@@ -405,12 +405,6 @@ class CommandManager(Manager[Command]):
     def toggle(self, command: str, chat_id: int, state: bool) -> None:
         """
         The toggle function is used to toggle the state of a command.
-        For example:
-
-            .. code-block:: python
-
-                >>> cmdmanager = CommandManager(Database())
-                >>> cmdmanager.toggle("hello", 123456789, True)
 
         :param command: The command to have its state changed
         :type command: str

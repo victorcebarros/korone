@@ -21,12 +21,6 @@ def get_language_code(message: Message) -> str:
     returns the language code of the user who sent that message.
     If no language code is found, it defaults to "en" (English).
 
-    Example:
-        .. code-block:: python
-
-            >>> get_language_code(message)
-            pt-br
-
     :param message: Get the message that was sent by the user
     :type message: Message
     :return: The language code of the user that sends a message
