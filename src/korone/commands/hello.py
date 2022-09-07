@@ -21,6 +21,12 @@ def get_language_code(message: Message) -> str:
     returns the language code of the user who sent that message.
     If no language code is found, it defaults to "en" (English).
 
+    Example:
+        .. code-block:: python
+
+            >>> get_language_code(message)
+            pt-br
+
     :param message: Get the message that was sent by the user
     :type message: Message
     :return: The language code of the user that sends a message
@@ -40,14 +46,11 @@ def get_language_code(message: Message) -> str:
 
 @Client.on_message(group=1)
 async def catchall(_a: Client, _b: Message) -> None:
-    """Catches all messages from user."""
-
     log.debug("New message!")
 
 
 @Client.on_message(filters.command("greet"))
 async def command_greet(_: Client, message: Message) -> None:
-    """Says hello."""
     language_code: str = get_language_code(message)
 
     await message.reply(
@@ -57,7 +60,6 @@ async def command_greet(_: Client, message: Message) -> None:
 
 @Client.on_message(filters.command("farewell"))
 async def command_farewell(_: Client, message: Message) -> None:
-    """Says farewell."""
     language_code: str = get_language_code(message)
 
     await message.reply(
