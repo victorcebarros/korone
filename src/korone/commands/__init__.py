@@ -42,7 +42,6 @@ class App:
         The setup function is called when the module is loaded. It creates a new
         Pyrogram Client object and stores it in self.app for later use.
 
-        :param self: Access the attributes and methods of the class in python
         :return: None
         """
         log.debug("Creating Pyrogram Client object")
@@ -65,7 +64,6 @@ class App:
         for initializing and running the application, as well as handling any errors
         that may occur during execution.
 
-        :param self: Access the attributes and methods of the class inside a method
         :return: None
         """
         if self.app is None:

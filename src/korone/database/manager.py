@@ -130,7 +130,6 @@ class Manager(ABC, Generic[T]):
         """
         The insert function inserts an item into the list.
 
-        :param self: Access the class attributes and methods
         :param item:T: Type of data and the item that is being inserted into the database.
         :return: The item that was inserted into the list
         """
@@ -140,7 +139,6 @@ class Manager(ABC, Generic[T]):
         """
         The cast function is used to convert a row into the desired type.
 
-        :param self: Access the class attributes and methods
         :param row:Row: Indicate the row that is being casted
         :return: The row as a dictionary
         """
@@ -150,7 +148,6 @@ class Manager(ABC, Generic[T]):
         The query function is a method of the Manager class. It takes a Clause
         as an argument. If search is None, it returns all rows in the table.
 
-        :param self: Access the class attributes and methods
         :param search:Clause: Search Clause
         :return: An iterable with all the objects that match the query
         """
@@ -173,7 +170,6 @@ class Manager(ABC, Generic[T]):
         which tells which columns should be updated. It also takes a condition clause,
         which matches the rows it should update.
 
-        :param self: Access the class attributes and methods
         :param update:Clause: Column to be updated
         :param condition:Clause: Condition to match the rows
         :return: None
@@ -196,7 +192,6 @@ class Manager(ABC, Generic[T]):
         """
         The delete function is used to delete rows from the database.
 
-        :param self: Self
         :param condition:Clause: Condition to match the rows
         :return: None
         """
@@ -215,7 +210,6 @@ class Manager(ABC, Generic[T]):
         The valid function returns True if the table and columns are not empty.
         Otherwise, it returns False.
 
-        :param self: Access the attributes and methods of the class
         :return: A boolean value
         """
         return not (self.table == "" or not self.columns)
@@ -241,7 +235,6 @@ class ChatManager(Manager[Chat]):
         If improperly initialized Chat Objects, then it will raise
         a RuntimeError.
 
-        :param self: Access the class attributes and methods
         :param item:Chat: Pass the chat object to the insert function
         :return: None
         """
@@ -264,7 +257,6 @@ class ChatManager(Manager[Chat]):
         The cast function takes a row from the database and returns a Chat object.
         The cast function is used to convert rows from the database into objects of type Chat.
 
-        :param self: Access the class attributes and methods
         :param row:Row: Access the values in the row
         :return: A chat object with the values from the row
         """
@@ -298,7 +290,6 @@ class UserManager(Manager[User]):
         item is the user to be inserted, it must be a properly initialized User object.
         self is the table object that contains this function.
 
-        :param self: Access the class attributes and methods
         :param item:User: Tell the function what type of data it is expecting
         :return: None
         """
@@ -320,7 +311,6 @@ class UserManager(Manager[User]):
         a User object. It is used by the Database class to convert rows into
         User objects.
 
-        :param self: Access the class attributes and methods
         :param row:Row: Access the values in the row
         :return: A user object
         """
@@ -362,7 +352,6 @@ class CommandManager(Manager[Command]):
         It accepts an item as its parameter, and returns None.
         The insert function raises RuntimeError if the chat_id of the given item is None.
 
-        :param self: Access the class attributes and methods
         :param item:Command: Tell the database what kind of data is going to be inserted
         :return: None
         """
@@ -386,7 +375,6 @@ class CommandManager(Manager[Command]):
         a Command object. This is necessary because the database returns rows as
         tuples, but we want to work with objects.
 
-        :param self: Access the class attributes and methods
         :param row:Row: Access the values in the row
         :return: A command object
         """
@@ -405,7 +393,6 @@ class CommandManager(Manager[Command]):
 
                 >>> toggle("hello", 123456789, True)
 
-        :param self: Access the class attributes and methods
         :param command:str: The command to have its state changed
         :param chat_id:int: Identifier of the chat that the command will be toggled
         :param state:bool: Determine whether the command should be enabled or disabled
@@ -424,7 +411,6 @@ class CommandManager(Manager[Command]):
         """
         The enable function enables a command for a given chat.
 
-        :param self: Access the class attributes and methods
         :param command:str: The command to be enabled
         :param chat_id:int: Identifier of the chat that the command will be enabled
         :return: None
@@ -435,7 +421,6 @@ class CommandManager(Manager[Command]):
         """
         The disable function disables a command a given chat.
 
-        :param self: Access the class attributes and methods
         :param command:str: The command to be disabled
         :param chat_id:int: Identifier of the chat that the command will be disabled
         :return: None
@@ -446,7 +431,6 @@ class CommandManager(Manager[Command]):
         """
         The is_enabled function checks if a command is enabled for a chat.
 
-        :param self: Access the class attributes and methods
         :param command:str: The command to be checked
         :param chat_id:int: Identifier of the chat that the command will be checked
         :return: True if the command is enabled otherwise False
