@@ -5,13 +5,6 @@
 
 .. include:: ../../README.rst
 
-Contributions
--------------
-
-.. toctree::
-
-   contributing
-
 Contents
 --------
 
@@ -23,6 +16,13 @@ Contents
    korone.database
    korone.locale
    korone.utils
+
+Contributions
+-------------
+
+.. toctree::
+
+   contributing
 
 Indices and tables
 ==================
