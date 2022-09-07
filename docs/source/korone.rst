@@ -1,17 +1,6 @@
 korone package
 ==============
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   korone.commands
-   korone.database
-   korone.locale
-   korone.utils
-
 Submodules
 ----------
 

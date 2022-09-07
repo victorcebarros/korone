@@ -11,11 +11,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   korone
-   korone.commands
-   korone.database
-   korone.locale
-   korone.utils
+   modules
 
 Contributions
 -------------
