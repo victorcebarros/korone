@@ -1,5 +1,39 @@
 """
 All Korone's constants that are used throughout the codebase.
+
+.. data:: LOGGER_FORMAT_OUTPUT
+    The format to be used in the logger.
+
+.. data:: DATABASE_SETUP
+    The database setup to be used.
+
+.. data:: MODULES_PACKAGE_NAME
+    The package that contains all the commands modules.
+
+.. data:: DEFAULT_NAME
+    The default bot name to be used when no name is provided.
+
+.. data:: DEFAULT_WORKERS
+    The default number of workers to be used when no number is provided.
+
+.. data:: DEFAULT_CONFIG_PATH
+    The default path to the config file.
+
+.. data:: DEFAULT_DBFILE_PATH
+    The default path to the database file.
+
+.. data:: XDG_CONFIG_HOME
+    The XDG_CONFIG_HOME environment variable.
+    Where user-specific configurations should be written (analogous to /etc).
+
+.. data:: XDG_DATA_HOME
+    The XDG_DATA_HOME environment variable.
+    Where user-specific data files should be written (analogous to /usr/share).
+
+.. note::
+    For more information related to the XDG constants, see: `XDG Base Directory`_.
+
+.. _XDG Base Directory: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
