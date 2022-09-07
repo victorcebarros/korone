@@ -1,6 +1,6 @@
 """
-``korone.commands`` is responsible for starting Pyrogram's Client and
-handling all the commands modules.
+The ``korone.commands`` package is responsible for starting
+Pyrogram's Client and handling with all the commands modules.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause

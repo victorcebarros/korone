@@ -1,5 +1,5 @@
 """
-Manages Korone's Database.
+This module contains all the Korone database managers.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
@@ -114,7 +114,7 @@ T = TypeVar("T")
 
 
 class Manager(ABC, Generic[T]):
-    """Manager class."""
+    """Base class for all database managers."""
 
     def __init__(self, database: Database):
         if database is None:

@@ -1,5 +1,5 @@
 """
-``korone.database`` is responsible for all database operations.
+The ``korone.database`` package is responsible for all database operations.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
@@ -19,7 +19,7 @@ class DatabaseError(Exception):
 
 
 class Database:
-    """Database manager."""
+    """Base class for database."""
 
     path: str
     conn: Connection

@@ -1,5 +1,5 @@
 """
-``korone.locale`` is the package that manages Korone's locales.
+The ``korone.locale`` is the package that manages Korone's locales.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
