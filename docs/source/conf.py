@@ -19,8 +19,8 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "Korone"
-copyright = "2022, Victor Cebarros, Hitalo M."
-author = "Victor Cebarros, Hitalo M."
+copyright = "2022, Victor Cebarros, Hitalo M"
+author = "Victor Cebarros, Hitalo M"
 
 # The full version, including alpha/beta/rc tags
 release = "0.1.0"
