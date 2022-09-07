@@ -43,7 +43,7 @@ async def catchall(_a: Client, _b: Message) -> None:
     log.debug("New message!")
 
 
-@Client.on_message(filters.command("greet"))
+@Client.on_message(filters.command("greet") & filters.togglable)  # type: ignore
 async def command_greet(_: Client, message: Message) -> None:
     """Says hello."""
     language_code: str = get_language_code(message)
@@ -53,7 +53,7 @@ async def command_greet(_: Client, message: Message) -> None:
     )
 
 
-@Client.on_message(filters.command("farewell"))
+@Client.on_message(filters.command("farewell") & filters.togglable)  # type: ignore
 async def command_farewell(_: Client, message: Message) -> None:
     """Says farewell."""
     language_code: str = get_language_code(message)

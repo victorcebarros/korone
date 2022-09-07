@@ -12,10 +12,13 @@ from importlib import import_module
 from types import FunctionType, ModuleType
 from typing import Iterable
 
-from pyrogram import Client
+from pyrogram import Client, filters
+from pyrogram.types import Message
 from pyrogram.handlers.handler import Handler
 
 from korone import constants
+from korone.database import Database
+from korone.database.manager import Command, CommandManager
 
 log = logging.getLogger(__name__)
 
@@ -30,8 +33,69 @@ class Module:
 
 
 MODULES: list[Module] = [
-    Module(name="hello", author="foo", has_help=False),
+    Module(name="hello", author="Korone Devs", has_help=False),
+    Module(name="toggle", author="Korone Devs", has_help=False),
 ]
+
+
+COMMANDS: dict[str, dict[int, bool]] = {}
+
+# FIXME: Properly implement togglabilty of commands
+#        We should probably register commands on the load function
+#        and then enable / disable them
+def toggle(command: Command):
+    """Toggles command."""
+
+    if command.command not in COMMANDS:
+        COMMANDS[command.command] = {}
+
+    COMMANDS[command.command][command.chat_id] = command.state
+
+    cmdmgr = CommandManager(Database())
+
+    if command.state:
+        cmdmgr.enable(command.command, command.chat_id)
+
+    cmdmgr.disable(command.command, command.chat_id)
+
+
+async def togglable(_, __, update: Message) -> bool:
+    """Checks whether command is enabled or not."""
+    if update.chat is None or update.chat.id is None:
+        return False
+
+    command: str = get_command_name(update)
+
+    log.info("command: %s", command)
+
+    if command not in COMMANDS:
+        return True
+
+    if update.chat.id not in COMMANDS[command]:
+        return True
+
+    return COMMANDS[command][update.chat.id]
+
+
+filters.togglable = filters.create(togglable)  # type: ignore
+
+
+# TODO: Move this to some korone.util module
+def get_command_name(message: Message) -> str:
+    """Get command name.
+
+    """
+    if message.text is None:
+        return ""
+
+    if not message.text.startswith("/"):
+        return ""
+
+    pos: int = message.text.find(" ")
+    if pos == -1:
+        pos = len(message.text)
+
+    return message.text[1:pos]
 
 
 def get_commands(module: ModuleType) -> Iterable[FunctionType]:
@@ -79,7 +143,8 @@ def load(app: Client) -> None:
         def add(command: FunctionType) -> bool:
             """
             The add function adds a command to the bot.
-            It takes in a function, and then for each handler that is associated with it, adds it to the bot.
+            It takes in a function, and then for each handler that is associated with it,
+            adds it to the bot.
             The add function returns True if successful or False if unsuccessful.
 
             :param command:FunctionType: Specify the command that is being added
@@ -102,3 +167,12 @@ def load(app: Client) -> None:
                 log.info("Could not add command %s", command)
                 continue
             log.info("Successfully added command %s", command)
+
+        # FIXME: Handle state of commands directly when registering them
+
+        cmdmgr = CommandManager(Database())
+
+        # loads the state of the commands
+        # in case they are disabled
+        for cmd in cmdmgr.query():
+            toggle(cmd)

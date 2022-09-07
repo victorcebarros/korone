@@ -10,3 +10,15 @@ strings:
     brief: "Says farewell to the user"
     description: "Says farewell to the user with the appropriate language."
     message: "Farewell!"
+  enable:
+    brief: "Enable commands"
+    description: "Enables a togglable command."
+    message:
+      success: "Successfully enabled the command!"
+      failure: "Failed to enable the command!"
+  disable:
+    brief: "Disable commands"
+    description: "Disables a togglable command."
+    message:
+      success: "Successfully disabled the command!"
+      failure: "Failed to disable the command!"

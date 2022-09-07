@@ -177,8 +177,9 @@ class Manager(ABC, Generic[T]):
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
 
-        if condition.data is None or condition.data == "":
-            raise AttributeError("Condition data can't be empty!")
+        # FIXME: Appropriately check whether data is properly passed by the clause
+        # if condition.data is None or condition.data == "":
+        #     raise AttributeError("Condition data can't be empty!")
 
         uclause, udata = update.eval(self.columns)
         cclause, cdata = condition.eval(self.columns)

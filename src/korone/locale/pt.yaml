@@ -10,3 +10,15 @@ strings:
     brief: "Diz adeus ao usuário"
     description: "Diz adeus ao usuário com a linguagem apropriada."
     message: "Adeus!"
+  enable:
+    brief: "Ativa comandos"
+    description: "Ativa um comando alternável."
+    message:
+      success: "Comando ativado com sucesso!"
+      failure: "Houve um erro ao ativar o comando!"
+  disable:
+    brief: "Desativa comandos"
+    description: "Desativa um comando alternável."
+    message:
+      success: "Comando desativado com sucesso!"
+      failure: "Houve um erro ao desativar o comando!"
