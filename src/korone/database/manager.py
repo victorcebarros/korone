@@ -130,8 +130,9 @@ class Manager(ABC, Generic[T]):
         """
         The insert function inserts an item into the list.
 
-        :param item:T: Type of data and the item that is being inserted into the database.
-        :return: The item that was inserted into the list
+        :param item: Type of data and the item that is being inserted into the database.
+        :type item: T
+        :return: None
         """
 
     @abstractmethod
@@ -139,8 +140,10 @@ class Manager(ABC, Generic[T]):
         """
         The cast function is used to convert a row into the desired type.
 
-        :param row:Row: Indicate the row that is being casted
+        :param row: Indicate the row that is being casted
+        :type row: Row
         :return: The row as a dictionary
+        :rtype: T
         """
 
     def query(self, search: Clause | None = None) -> Iterable[T]:
@@ -148,8 +151,10 @@ class Manager(ABC, Generic[T]):
         The query function is a method of the Manager class. It takes a Clause
         as an argument. If search is None, it returns all rows in the table.
 
-        :param search:Clause: Search Clause
+        :param search: Search Clause
+        :type search: Clause
         :return: An iterable with all the objects that match the query
+        :rtype: Iterable[T]
         """
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
@@ -170,8 +175,10 @@ class Manager(ABC, Generic[T]):
         which tells which columns should be updated. It also takes a condition clause,
         which matches the rows it should update.
 
-        :param update:Clause: Column to be updated
-        :param condition:Clause: Condition to match the rows
+        :param update: Column to be updated
+        :type update: Clause
+        :param condition: Condition to match the rows
+        :type condition: Clause
         :return: None
         """
         if not self.valid():
@@ -192,7 +199,8 @@ class Manager(ABC, Generic[T]):
         """
         The delete function is used to delete rows from the database.
 
-        :param condition:Clause: Condition to match the rows
+        :param condition: Condition to match the rows
+        :type condition: Clause
         :return: None
         """
         if not self.valid():
@@ -211,6 +219,7 @@ class Manager(ABC, Generic[T]):
         Otherwise, it returns False.
 
         :return: A boolean value
+        :rtype: bool
         """
         return not (self.table == "" or not self.columns)
 
@@ -235,7 +244,8 @@ class ChatManager(Manager[Chat]):
         If improperly initialized Chat Objects, then it will raise
         a RuntimeError.
 
-        :param item:Chat: Pass the chat object to the insert function
+        :param item: Pass the chat object to the insert function
+        :type item: Chat
         :return: None
         """
         if item.id is None:
@@ -257,8 +267,10 @@ class ChatManager(Manager[Chat]):
         The cast function takes a row from the database and returns a Chat object.
         The cast function is used to convert rows from the database into objects of type Chat.
 
-        :param row:Row: Access the values in the row
+        :param row: Access the values in the row
+        :type row: Row
         :return: A chat object with the values from the row
+        :rtype: Chat
         """
         chat: Chat = Chat(
             id=row[self.columns[Column.UUID]], type=row[self.columns[Column.CHATTYPE]]
@@ -290,7 +302,8 @@ class UserManager(Manager[User]):
         item is the user to be inserted, it must be a properly initialized User object.
         self is the table object that contains this function.
 
-        :param item:User: Tell the function what type of data it is expecting
+        :param item: Tell the function what type of data it is expecting
+        :type item: User
         :return: None
         """
         if item.id is None:
@@ -311,8 +324,10 @@ class UserManager(Manager[User]):
         a User object. It is used by the Database class to convert rows into
         User objects.
 
-        :param row:Row: Access the values in the row
+        :param row: Access the values in the row
+        :type row: Row
         :return: A user object
+        :rtype: User
         """
         user: User = User(
             id=row[self.columns[Column.UUID]],
@@ -352,7 +367,8 @@ class CommandManager(Manager[Command]):
         It accepts an item as its parameter, and returns None.
         The insert function raises RuntimeError if the chat_id of the given item is None.
 
-        :param item:Command: Tell the database what kind of data is going to be inserted
+        :param item: Tell the database what kind of data is going to be inserted
+        :type item: Command
         :return: None
         """
         if item.chat_id is None:
@@ -375,8 +391,10 @@ class CommandManager(Manager[Command]):
         a Command object. This is necessary because the database returns rows as
         tuples, but we want to work with objects.
 
-        :param row:Row: Access the values in the row
+        :param row: Access the values in the row
+        :type row: Row
         :return: A command object
+        :rtype: Command
         """
         return Command(
             command=row[self.columns[Column.COMMAND]],
@@ -391,11 +409,15 @@ class CommandManager(Manager[Command]):
 
             .. code-block:: python
 
-                >>> toggle("hello", 123456789, True)
+                >>> cmdmanager = CommandManager(Database())
+                >>> cmdmanager.toggle("hello", 123456789, True)
 
-        :param command:str: The command to have its state changed
-        :param chat_id:int: Identifier of the chat that the command will be toggled
-        :param state:bool: Determine whether the command should be enabled or disabled
+        :param command: The command to have its state changed
+        :type command: str
+        :param chat_id: Identifier of the chat that the command will be toggled
+        :type chat_id: int
+        :param state: Determine whether the command should be enabled or disabled
+        :type state: bool
         :return: None
         """
         query = Clause(Column.COMMAND, command) & Clause(Column.UUID, chat_id)
@@ -411,8 +433,10 @@ class CommandManager(Manager[Command]):
         """
         The enable function enables a command for a given chat.
 
-        :param command:str: The command to be enabled
-        :param chat_id:int: Identifier of the chat that the command will be enabled
+        :param command: The command to be enabled
+        :type command: str
+        :param chat_id: Identifier of the chat that the command will be enabled
+        :type chat_id: int
         :return: None
         """
         self.toggle(command, chat_id, True)
@@ -421,8 +445,10 @@ class CommandManager(Manager[Command]):
         """
         The disable function disables a command a given chat.
 
-        :param command:str: The command to be disabled
-        :param chat_id:int: Identifier of the chat that the command will be disabled
+        :param command: The command to be disabled
+        :type command: str
+        :param chat_id: Identifier of the chat that the command will be disabled
+        :type chat_id: int
         :return: None
         """
         self.toggle(command, chat_id, False)
@@ -431,9 +457,12 @@ class CommandManager(Manager[Command]):
         """
         The is_enabled function checks if a command is enabled for a chat.
 
-        :param command:str: The command to be checked
-        :param chat_id:int: Identifier of the chat that the command will be checked
+        :param command: The command to be checked
+        :type command: str
+        :param chat_id: Identifier of the chat that the command will be checked
+        :param chat_id: int
         :return: True if the command is enabled otherwise False
+        :rtype: bool
         """
         query = Clause(Column.COMMAND, command) & Clause(Column.UUID, chat_id)
 

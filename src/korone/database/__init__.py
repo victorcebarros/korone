@@ -25,14 +25,14 @@ class Database:
     conn: Connection
 
     @classmethod
-    def isopen(cls):
+    def isopen(cls) -> bool:
         """
         The isopen function is a class method that is used to mark class as having an open connection.
         It's purpose is to make sure that the connection isn't closed before the class' __del__ method
         is called, which would close the database connection.
 
-        :param cls: Pass the class object to the decorator
         :return: True if the class has an attribute named conn and it is an instance of connection
+        :rtype: bool
         """
         return hasattr(cls, "conn") and isinstance(cls.conn, Connection)
 
@@ -43,8 +43,8 @@ class Database:
         which is the path of the database file. If no path is given, it will default to
         the constant DEFAULT_DBFILE_PATH.
 
-        :param cls: Make the function a class method
-        :param path:str="": Specify the path to the database file
+        :param path: Specify the path to the database file, defaults to ""
+        :type path: str, optional
         :return: None
         """
         if cls.isopen():
@@ -65,7 +65,6 @@ class Database:
         The setup function is called when the database is first initialized.
         It creates all of the tables and indexes that are required for operation.
 
-        :param cls: Refer to the class, not an instance of
         :return: None
         """
         if not cls.isopen():
@@ -91,11 +90,13 @@ class Database:
         used to execute SQL statements on the database connection that was
         opened by the connect function.
 
-        :param cls: Make sure that the database is open
-        :param sql:str: Pass in the sql statement that you want to execute
-        :param parameters:tuple=(): Pass a tuple of arguments to the sql statement
+        :param sql: Pass in the sql statement that you want to execute
+        :type sql: str
+        :param parameters: Pass a tuple of arguments to the sql statement, defaults to ()
+        :type parameters: tuple, optional
         :param /: Indicate that the function has a variable number of parameters
         :return: The cursor object
+        :rtype: Cursor
         """
 
         if not cls.isopen():
@@ -110,7 +111,6 @@ class Database:
         """
         The close function closes the database connection.
 
-        :param cls: Refer to the class itself, so that we can call
         :return: None
         """
         if not cls.isopen():

@@ -35,10 +35,14 @@ def traverse(tree: Union[dict, list], path: str, separator: str = "/") -> Any:
             >>> traverse(root, "fibonacci/4")
             5
 
-    :param tree:Union[dict, list]: The tree to traverse
-    :param path:str: Specify the path to the node that we want to access
-    :param separator:str="/": Specify the path separator
-    :return: The -value +node at that path.
+    :param tree: The tree to traverse
+    :type tree: Union[dict, list]
+    :param path: Specify the path to the node that we want to access
+    :type path: str
+    :param separator: Specify the path separator, defaults to "/"
+    :type separator: str, optional
+    :return: The node at that path.
+    :rtype: Any
     """
     if tree is None:
         return None

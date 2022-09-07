@@ -40,8 +40,10 @@ def get_commands(module: ModuleType) -> Iterable[FunctionType]:
     that have been decorated with the @handler decorator. This function is used to
     determine which commands are available for use by the client.
 
-    :param module:ModuleType: Get the module that contains the function
+    :param module: Get the module that contains the function
+    :type module: ModuleType
     :return: An iterable of functions that have a `handlers` attribute
+    :rtype: Iterable[FunctionType]
     """
     functions = filter(
         inspect.isfunction, map(lambda var: getattr(module, var), vars(module))
@@ -54,7 +56,8 @@ def load(app: Client) -> None:
     The load function is responsible for loading
     all of the modules in the modules package.
 
-    :param app:Client: Call the load function
+    :param app: Call the load function
+    :type app: Client
     :return: None
     """
     if app is None:
@@ -82,8 +85,10 @@ def load(app: Client) -> None:
             It takes in a function, and then for each handler that is associated with it, adds it to the bot.
             The add function returns True if successful or False if unsuccessful.
 
-            :param command:FunctionType: Specify the command that is being added
+            :param command: Specify the command that is being added
+            :type command: FunctionType
             :return: True if the command was loaded successfully, false otherwise
+            :rtype: bool
             """
             successful: bool = False
             for handler, group in command.handlers:  # type: ignore

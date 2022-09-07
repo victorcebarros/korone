@@ -35,7 +35,8 @@ def init(cfgpath: str = "") -> None:
     it is created with a basic structure. The function then reads its contents into
     a ConfigParser object for use by other functions.
 
-    :param cfgpath:str="": Specify a custom path to the config file
+    :param cfgpath: Specify a custom path to the config file, defaults to ""
+    :type cfgpath: str, optional
     :return: None
     """
     if not cfgpath:
@@ -72,9 +73,13 @@ def get(section: str, option: str, fallback: str = "") -> str:
     The get function is a helper function that retrieves the value of an option
     in a given section. If no such option exists, it returns the fallback instead.
 
-    :param section:str: Specify the section of the config file to read from
-    :param option:str: Specify which option in the section you want to get
-    :param fallback:str="": Set a default value if the option is not found in the config file
+    :param section: Specify the section of the config file to read from
+    :type section: str
+    :param option: Specify which option in the section you want to get
+    :type option: str
+    :param fallback: Set a default value if the option is not found in the config file, defaults to ""
+    :type fallback: str, optional
     :return: The value of the option in the given section
+    :rtype: str
     """
     return config.get(section, option, fallback=fallback)

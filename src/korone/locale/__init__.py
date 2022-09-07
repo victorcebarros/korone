@@ -29,9 +29,10 @@ class StringResource:
         The load function loads a language pack for the specified language code.
         If the file does not exist, it will load English instead.
 
-        :param cls: Access the class variables of languagepackloader
-        :param language_code:str: Specify the language code to load
+        :param language_code: Specify the language code to load
+        :type language_code: str
         :return: A dictionary of the language strings
+        :rtype: dict[str, str]
         """
         if language_code in cls.languages:
             return cls.languages[language_code]
@@ -63,11 +64,14 @@ class StringResource:
         the resource file. If it is not found, then it will attempt to retrieve
         it from the English resource file. If that fails, then it returns the default.
 
-        :param cls: Call the load function from the class
-        :param language_code:str: Specify the language of the string that is being looked up
-        :param resource:str: Specify the resource that is being loaded
-        :param default:str="": Set a default value if the resource is not found
+        :param language_code: Specify the language of the string that is being looked up
+        :type language_code: str
+        :param resource: Specify the resource that is being loaded
+        :type resource: str
+        :param default: Set a default value if the resource is not found, defaults to ""
+        :type default: str, optional
         :return: The string at the given resource
+        :rtype: str
         """
         string: str
 

@@ -21,8 +21,10 @@ def get_language_code(message: Message) -> str:
     returns the language code of the user who sent that message.
     If no language code is found, it defaults to "en" (English).
 
-    :param message:Message: Get the message that was sent by the user
+    :param message: Get the message that was sent by the user
+    :type message: Message
     :return: The language code of the user that sends a message
+    :rtype: str
     """
     language_code: str = "en"
     if message.from_user is None:

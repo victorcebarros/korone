@@ -20,8 +20,10 @@ def main(argv: list[str]) -> int:
 
     It creates a new instance of an App object and runs it.
 
-    :param argv:list[str]: Pass command line arguments to the program
+    :param argv: Pass command line arguments to the program
+    :type argv: list[str]
     :return: The number of arguments passed to it
+    :rtype: int
     """
     log.info("Program started")
 
