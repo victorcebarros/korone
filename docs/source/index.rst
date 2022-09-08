@@ -9,20 +9,23 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-   modules
-
-Contributions
--------------
+   korone
 
 .. toctree::
+   :caption: Contributions
 
    contributing
+
+.. toctree::
+   :hidden:
+   :caption: Project Links
+
+   GitHub <https://github.com/victorcebarros/korone>
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
