@@ -22,11 +22,16 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class Module:
-    """Module metadata."""
+    """Module structure."""
 
     name: str
+    "Module name"
+
     author: str
+    "Module author"
+
     has_help: bool
+    "`True` if the module has help, otherwise `False`"
 
 
 MODULES: list[Module] = [

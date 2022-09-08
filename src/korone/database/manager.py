@@ -24,7 +24,7 @@ class Column(Enum):
     """Selects column for tables in database."""
 
     UUID = auto()
-    "UserID column."
+    "Universally Unique Identifier column."
 
     LANGUAGE = auto()
     "Chat language column."
@@ -361,7 +361,7 @@ class UserManager(Manager[User]):
 
 @dataclass
 class Command:
-    """Simple command structure."""
+    """Command structure."""
 
     command: str
     "The command"
