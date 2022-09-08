@@ -65,7 +65,7 @@ def traverse(tree: Union[dict, list], path: str, separator: str = "/") -> Any:
     return tree
 
 
-def bfs_attr_search(root: object, attr: str) -> object:
+def bfs_attr_search(root: Any, attr: str) -> Any:
     """
     Searches for attribute in object using the BFS algorithm.
 
