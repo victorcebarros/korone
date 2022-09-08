@@ -22,12 +22,25 @@ class AppParameters:
     """Pyrogram's Client parameters."""
 
     api_hash: str
+    "API hash."
+
     api_id: str
+    "API ID."
+
     bot_token: str
+    "Bot token."
+
     in_memory: bool = True
+    "`True` if the Pyrogram session should be in memory, otherwise `False`."
+
     ipv6: bool = False
+    "`True` if the client should use IPv6, otherwise `False`."
+
     name: str = constants.DEFAULT_NAME
+    "Name of the client."
+
     workers: int = constants.DEFAULT_WORKERS
+    "Number of workers to be used by the client."
 
 
 class App:
