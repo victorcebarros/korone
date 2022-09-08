@@ -86,3 +86,5 @@ html_theme_options = {
 }
 
 html_title = f"Korone<br> v{version}"
+
+autodoc_member_order = "bysource"
