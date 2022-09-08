@@ -24,28 +24,48 @@ class Column(Enum):
     """Selects column for tables in database."""
 
     UUID = auto()
+    "UserID column."
+
     LANGUAGE = auto()
+    "Chat language column."
+
     REGISTRYDATE = auto()
+    "Chat registration date column."
+
     CHATTYPE = auto()
+    "Chat type column."
+
     COMMAND = auto()
+    "Command column."
+
     STATE = auto()
+    "Command state column."
 
 
 class Operator(Enum):
     """Operator to be applied in a clause on a SQL Statement."""
 
     LT = "<"
+    "Less than"
+
     EQ = "="
+    "Equal to"
+
     GT = ">"
+    "Greater than"
+
     LE = "<="
+    "Less than or equal to"
+
     GE = ">="
+    "Greater than or equal to"
 
     def __str__(self) -> str:
         return str(self.value)
 
 
 class BaseClause(ABC):
-    """Base Clause for all Clauses."""
+    """Base class for all Clauses."""
 
     def __and__(self, other):
         return AndClause(self, other)
@@ -344,8 +364,13 @@ class Command:
     """Simple command structure."""
 
     command: str
+    "The command"
+
     chat_id: int
+    "Chat ID"
+
     state: bool
+    "Command state"
 
 
 class CommandManager(Manager[Command]):
