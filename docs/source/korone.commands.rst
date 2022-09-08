@@ -9,7 +9,6 @@ korone.commands.hello module
 
 .. automodule:: korone.commands.hello
    :members:
-   :undoc-members:
    :show-inheritance:
 
 korone.commands.modules module
