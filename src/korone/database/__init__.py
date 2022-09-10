@@ -31,7 +31,7 @@ class Database:
     def isopen(cls) -> bool:
         """
         The isopen function is a class method that is used to mark class as having an open connection.
-        It's purpose is to make sure that the connection isn't closed before the class' __del__ method
+        It's purpose is to make sure that the connection isn't closed before the class' :obj:`__del__` method
         is called, which would close the database connection.
 
         :return: :obj:`True` if the class has an attribute named conn and it is an instance of connection
@@ -44,7 +44,7 @@ class Database:
         """
         The connect function is used to connect to the database. It takes one argument,
         which is the path of the database file. If no path is given, it will default to
-        the constant DEFAULT_DBFILE_PATH.
+        the constant :obj:`constants.DEFAULT_DBFILE_PATH`.
 
         :param path: Specify the path to the database file, defaults to ""
         :type path: str, optional
@@ -89,7 +89,7 @@ class Database:
     @classmethod
     def execute(cls, sql: str, parameters: tuple = (), /) -> Cursor:
         """
-        The execute function is a class method of the Connection class. It is
+        The execute function is a class method of the :class:`~sqlite3.Connection` class. It is
         used to execute SQL statements on the database connection that was
         opened by the connect function.
 
@@ -99,7 +99,7 @@ class Database:
         :type parameters: tuple, optional
         :param /: Indicate that the function has a variable number of parameters
         :return: The cursor object
-        :rtype: Cursor
+        :rtype: ~sqlite3.Cursor
         """
 
         if not cls.isopen():

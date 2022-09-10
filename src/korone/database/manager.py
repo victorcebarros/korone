@@ -78,7 +78,16 @@ class BaseClause(ABC):
 
     @abstractmethod
     def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
-        """Evaluates SQL Clauses"""
+        """
+        The eval function takes a dictionary of columns and their values,
+        and returns the SQL query string and tuple of arguments to be passed
+        to the database cursor. The eval function is called by the insert method.
+
+        :param columns: Pass in the columns that are being used to evaluate the data
+        :type columns: dict[Column, str]
+        :return: Returns the SQL query string and tuple of arguments to be passed to the database cursor
+        :rtype: tuple[str, tuple[Any, ...]]
+        """
 
 
 @dataclass
@@ -86,10 +95,25 @@ class Clause(BaseClause):
     """Single SQL Clause."""
 
     column: Column
+    "Column to be compared."
+
     data: Any = None
+    "Data to be compared."
+
     operator: Operator = Operator.EQ
+    "Operator to be applied in a clause on a SQL Statement."
 
     def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        """
+        The eval function takes a dictionary of columns and the data to be inserted
+        into those columns. It returns a tuple containing the SQL statement as its first
+        element, and the data to be inserted into that statement as its second element.
+
+        :param columns: Get the name of the column
+        :type columns: dict[Column, str]
+        :return: A tuple of the sql statement and the values to be substituted in
+        :rtype: tuple[str, tuple[~typing.Any, ...]]
+        """
         return f"{columns[self.column]} {self.operator} ?", (self.data,)
 
 
@@ -101,6 +125,16 @@ class AndClause(BaseClause):
         self.other = other
 
     def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        """
+        The eval function takes a dictionary of columns and the values to be substituted into those columns,
+        and returns a tuple containing the SQL clause that will evaluate those values, as well as the data
+        that will be returned by that clause. The eval function is used internally by all other methods in this class.
+
+        :param columns: Get the column name from the column object
+        :type columns: dict[Column, str]
+        :return: A tuple containing the sql string and the data to be bound
+        :rtype: tuple[str, tuple[~typing.Any, ...]]
+        """
         bclause, bdata = self.base.eval(columns)
         oclause, odata = self.other.eval(columns)
         return f"({bclause} AND {oclause})", (*bdata, *odata)
@@ -114,6 +148,17 @@ class OrClause(BaseClause):
         self.other = other
 
     def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        """
+        The eval function takes a dictionary of columns and the values to be substituted into those
+        columns, and returns a tuple containing the clause that will be used in the WHERE statement, as well
+        as all of the data that will be bound to it. The base class's eval function is called first, then
+        the other's.
+
+        :param columns: Get the column names from the column objects
+        :type columns: dict[Column, str]
+        :return: The string representation of the expression and a tuple containing the data
+        :rtype: tuple[str, tuple[~typing.Any, ...]]
+        """
         bclause, bdata = self.base.eval(columns)
         oclause, odata = self.other.eval(columns)
         return f"({bclause} OR {oclause})", (*bdata, *odata)
@@ -126,6 +171,17 @@ class InvertClause(BaseClause):
         self.base = base
 
     def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        """
+        The eval function takes a dictionary of columns and the values to be assigned
+        to them, and returns a tuple containing the SQL clause that assigns those values
+        to the columns, as well as a tuple containing all of the data in order. This is
+        the function that should be used to create an INSERT statement.
+
+        :param columns: Map the column names in the query to their respective data
+        :type columns: dict[Column, str]
+        :return: A tuple with the string representation of the clause and a tuple containing all data that is used in the clause
+        :rtype: tuple[str, tuple[~typing.Any, ...]]
+        """
         bclause, bdata = self.base.eval(columns)
         return f"(NOT {bclause})", (*bdata,)
 
@@ -235,8 +291,8 @@ class Manager(ABC, Generic[T]):
 
     def valid(self) -> bool:
         """
-        The valid function returns True if the table and columns are not empty.
-        Otherwise, it returns False.
+        The valid function returns :obj:`True` if the table and columns are not empty.
+        Otherwise, it returns :obj:`False`.
 
         :return: A boolean value
         :rtype: bool
@@ -262,7 +318,7 @@ class ChatManager(Manager[Chat]):
         The insert function inserts a new chat into the database.
         It accepts an item, which is expected to be of type Chat.
         If improperly initialized Chat Objects, then it will raise
-        a RuntimeError.
+        a :obj:`RuntimeError`.
 
         :param item: Pass the chat object to the insert function
         :type item: ~pyrogram.types.Chat
@@ -284,7 +340,7 @@ class ChatManager(Manager[Chat]):
 
     def cast(self, row: Row) -> Chat:
         """
-        The cast function takes a row from the database and returns a Chat object.
+        The cast function takes a row from the database and returns a Chat Chat.
         The cast function is used to convert rows from the database into objects of type Chat.
 
         :param row: Access the values in the row
@@ -318,11 +374,8 @@ class UserManager(Manager[User]):
     def insert(self, item: User) -> None:
         """
         The insert function inserts a new user into the database.
-        It takes two arguments: item and self.
-        item is the user to be inserted, it must be a properly initialized User object.
-        self is the table object that contains this function.
 
-        :param item: Tell the function what type of data it is expecting
+        :param item: the user to be inserted, it must be a properly initialized User object.
         :type item: ~pyrogram.types.User
         :return: None
         """
@@ -479,7 +532,7 @@ class CommandManager(Manager[Command]):
         :param command: The command to be checked
         :type command: str
         :param chat_id: Identifier of the chat that the command will be checked
-        :param chat_id: int
+        :type chat_id: int
         :return: :obj:`True` if the command is enabled otherwise :obj:`False`
         :rtype: bool
         """
