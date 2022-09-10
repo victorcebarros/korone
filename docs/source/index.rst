@@ -19,8 +19,8 @@ Contents
    contributing
 
 .. toctree::
-   :hidden:
    :caption: Project Links
+   :hidden:
 
    GitHub <https://github.com/victorcebarros/korone>
 

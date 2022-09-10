@@ -31,10 +31,10 @@ class AppParameters:
     "Bot token."
 
     in_memory: bool = True
-    "`True` if the Pyrogram session should be in memory, otherwise `False`."
+    ":obj:`True` if the Pyrogram session should be in memory, otherwise :obj:`False`."
 
     ipv6: bool = False
-    "`True` if the client should use IPv6, otherwise `False`."
+    ":obj:`True` if the client should use IPv6, otherwise :obj:`False`."
 
     name: str = constants.DEFAULT_NAME
     "Name of the client."
