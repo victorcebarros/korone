@@ -22,7 +22,7 @@ def get_language_code(message: Message) -> str:
     If no language code is found, it defaults to "en" (English).
 
     :param message: Get the message that was sent by the user
-    :type message: Message
+    :type message: ~pyrogram.types.Message
     :return: The language code of the user that sends a message
     :rtype: str
     """

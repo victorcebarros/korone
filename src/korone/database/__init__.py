@@ -22,7 +22,10 @@ class Database:
     """Base class for database."""
 
     path: str
+    "Path to the database file."
+
     conn: Connection
+    "Connection to the database."
 
     @classmethod
     def isopen(cls) -> bool:
@@ -31,7 +34,7 @@ class Database:
         It's purpose is to make sure that the connection isn't closed before the class' __del__ method
         is called, which would close the database connection.
 
-        :return: True if the class has an attribute named conn and it is an instance of connection
+        :return: :obj:`True` if the class has an attribute named conn and it is an instance of connection
         :rtype: bool
         """
         return hasattr(cls, "conn") and isinstance(cls.conn, Connection)

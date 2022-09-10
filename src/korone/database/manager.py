@@ -161,7 +161,7 @@ class Manager(ABC, Generic[T]):
         The cast function is used to convert a row into the desired type.
 
         :param row: Indicate the row that is being casted
-        :type row: SQLite3.Row
+        :type row: ~sqlite3.Row
         :return: The row as a dictionary
         :rtype: T
         """
@@ -174,7 +174,7 @@ class Manager(ABC, Generic[T]):
         :param search: Search Clause
         :type search: Clause
         :return: An iterable with all the objects that match the query
-        :rtype: Iterable[T]
+        :rtype: ~typing.Iterable[T]
         """
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
@@ -265,7 +265,7 @@ class ChatManager(Manager[Chat]):
         a RuntimeError.
 
         :param item: Pass the chat object to the insert function
-        :type item: Chat
+        :type item: ~pyrogram.types.Chat
         :return: None
         """
         if item.id is None:
@@ -288,9 +288,9 @@ class ChatManager(Manager[Chat]):
         The cast function is used to convert rows from the database into objects of type Chat.
 
         :param row: Access the values in the row
-        :type row: SQLite3.Row
+        :type row: ~sqlite3.Row
         :return: A chat object with the values from the row
-        :rtype: Chat
+        :rtype: ~pyrogram.types.Chat
         """
         chat: Chat = Chat(
             id=row[self.columns[Column.UUID]], type=row[self.columns[Column.CHATTYPE]]
@@ -323,7 +323,7 @@ class UserManager(Manager[User]):
         self is the table object that contains this function.
 
         :param item: Tell the function what type of data it is expecting
-        :type item: User
+        :type item: ~pyrogram.types.User
         :return: None
         """
         if item.id is None:
@@ -345,9 +345,9 @@ class UserManager(Manager[User]):
         User objects.
 
         :param row: Access the values in the row
-        :type row: SQLite3.Row
+        :type row: ~sqlite3.Row
         :return: A user object
-        :rtype: User
+        :rtype: ~pyrogram.types.User
         """
         user: User = User(
             id=row[self.columns[Column.UUID]],
@@ -417,7 +417,7 @@ class CommandManager(Manager[Command]):
         tuples, but we want to work with objects.
 
         :param row: Access the values in the row
-        :type row: SQLite3.Row
+        :type row: ~sqlite3.Row
         :return: A command object
         :rtype: Command
         """
@@ -480,7 +480,7 @@ class CommandManager(Manager[Command]):
         :type command: str
         :param chat_id: Identifier of the chat that the command will be checked
         :param chat_id: int
-        :return: True if the command is enabled otherwise False
+        :return: :obj:`True` if the command is enabled otherwise :obj:`False`
         :rtype: bool
         """
         query = Clause(Column.COMMAND, command) & Clause(Column.UUID, chat_id)

@@ -37,13 +37,13 @@ def traverse(tree: Union[dict, list], path: str, separator: str = "/") -> Any:
             5
 
     :param tree: The tree to traverse
-    :type tree: Union[dict, list]
+    :type tree: typing.Union[dict, list]
     :param path: Specify the path to the node that we want to access
     :type path: str
     :param separator: Specify the path separator, defaults to "/"
     :type separator: str, optional
     :return: The node at that path.
-    :rtype: Any
+    :rtype: typing.Any
     """
     if tree is None:
         return None

@@ -35,8 +35,14 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
+    "sphinx.ext.intersphinx",
     "sphinx_copybutton",
 ]
+
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "pyrogram": ("https://docs.pyrogram.org/", None),
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

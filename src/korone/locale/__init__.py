@@ -21,7 +21,10 @@ class StringResource:
     """Get locale-specific string resources."""
 
     languages: dict[str, Any] = {}
+    "The languages dictionary."
+
     dirpath: str = path.dirname(__file__)
+    "The directory path of the package."
 
     @classmethod
     def load(cls, language_code: str) -> dict[str, str]:

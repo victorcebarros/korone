@@ -31,7 +31,7 @@ class Module:
     "Module author"
 
     has_help: bool
-    "`True` if the module has help, otherwise `False`"
+    ":obj:`True` if the module has help, otherwise :obj:`False`"
 
 
 MODULES: list[Module] = [
@@ -46,9 +46,9 @@ def get_commands(module: ModuleType) -> Iterable[FunctionType]:
     determine which commands are available for use by the client.
 
     :param module: Get the module that contains the function
-    :type module: ModuleType
+    :type module: ~types.ModuleType
     :return: An iterable of functions that have a `handlers` attribute
-    :rtype: Iterable[FunctionType]
+    :rtype: ~typing.Iterable[FunctionType]
     """
     functions = filter(
         inspect.isfunction, map(lambda var: getattr(module, var), vars(module))
@@ -62,7 +62,7 @@ def load(app: Client) -> None:
     all of the modules in the modules package.
 
     :param app: Call the load function
-    :type app: Client
+    :type app: ~pyrogram.Client
     :return: None
     """
     if app is None:
@@ -91,7 +91,7 @@ def load(app: Client) -> None:
             The add function returns True if successful or False if unsuccessful.
 
             :param command: Specify the command that is being added
-            :type command: FunctionType
+            :type command: ~types.FunctionType
             :return: True if the command was loaded successfully, false otherwise
             :rtype: bool
             """
