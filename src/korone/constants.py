@@ -21,13 +21,14 @@ LOGGER_FORMAT_OUTPUT: str = (
     "|%(message)s"
     "|%(created)i"
 )
-"The format to be used in the logger."
+"""The format to be used in the logger."""
 
 XDG_CONFIG_HOME: str = os.environ.get("XDG_CONFIG_HOME", "~/.config")
 """
 The XDG_CONFIG_HOME environment variable.
 Where user-specific configurations should be written (analogous to /etc).
 """
+
 XDG_DATA_HOME: str = os.environ.get("XDG_DATA_HOME", "~/.local/share")
 """
 The XDG_DATA_HOME environment variable.
@@ -35,14 +36,16 @@ Where user-specific data files should be written (analogous to /usr/share).
 """
 
 DEFAULT_CONFIG_PATH: str = f"{XDG_CONFIG_HOME}/korone/korone.conf"
-"The default path to the config file."
+"""The default path to the config file."""
+
 DEFAULT_DBFILE_PATH: str = f"{XDG_DATA_HOME}/korone/korone.db"
-"The default path to the database file."
+"""The default path to the database file."""
 
 DEFAULT_WORKERS: int = 24
-"The default number of workers to be used when no number is provided."
+"""The default number of workers to be used when no number is provided."""
+
 DEFAULT_NAME: str = "korone"
-"The default Pyrogram client name to be used when no name is provided."
+"""The default Pyrogram client name to be used when no name is provided."""
 
 DATABASE_SETUP: str = """\
 CREATE TABLE IF NOT EXISTS Users (
@@ -76,7 +79,7 @@ VACUUM;
 
 PRAGMA journal_mode="WAL";
 """
-"The database setup to be used."
+"""The database setup to be used."""
 
 MODULES_PACKAGE_NAME: str = "korone.commands"
-"The package that contains all the commands modules."
+"""The package that contains all the commands modules."""

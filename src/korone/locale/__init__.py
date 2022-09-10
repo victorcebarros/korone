@@ -21,21 +21,22 @@ class StringResource:
     """Get locale-specific string resources."""
 
     languages: dict[str, Any] = {}
-    "The languages dictionary."
+    """The languages dictionary."""
 
     dirpath: str = path.dirname(__file__)
-    "The directory path of the package."
+    """The directory path of the package."""
 
     @classmethod
     def load(cls, language_code: str) -> dict[str, str]:
-        """
-        The load function loads a language pack for the specified language code.
-        If the file does not exist, it will load English instead.
+        """The load function loads a language pack for the specified language
+        code. If the file does not exist, it will load English instead.
 
-        :param language_code: Specify the language code to load
-        :type language_code: str
-        :return: A dictionary of the language strings
-        :rtype: dict[str, str]
+        Args:
+            language_code (:obj:`str`): Specify the language code to load.
+
+        Returns:
+            :obj:`dict`\\[:obj:`str`, :obj:`str`]: A dictionary of the
+                language strings.
         """
         if language_code in cls.languages:
             return cls.languages[language_code]
@@ -62,19 +63,18 @@ class StringResource:
 
     @classmethod
     def get(cls, language_code: str, resource: str, default: str = "") -> str:
-        """
-        The get function is a helper function that retrieves the string from
+        """The get function is a helper function that retrieves the string from
         the resource file. If it is not found, then it will attempt to retrieve
-        it from the English resource file. If that fails, then it returns the default.
+        it from the English resource file. If that fails, then it returns the
+        default.
 
-        :param language_code: Specify the language of the string that is being looked up
-        :type language_code: str
-        :param resource: Specify the resource that is being loaded
-        :type resource: str
-        :param default: Set a default value if the resource is not found, defaults to ""
-        :type default: str, optional
-        :return: The string at the given resource
-        :rtype: str
+        Args:
+            language_code (:obj:`str`): Specify the language of the string that is being looked up.
+            resource (:obj:`str`): Specify the resource that is being loaded.
+            default (:obj:`str`, *optional*): Set a default value if the resource is not found. Defaults to "".
+
+        Returns:
+            :obj:`str`: The string at the given resource.
         """
         string: str
 

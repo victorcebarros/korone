@@ -28,16 +28,15 @@ config["pyrogram"] = {
 
 
 def init(cfgpath: str = "") -> None:
-    """
-    The init function initializes the configuration module.
-    It reads the default configuration file from DEFAULT_CONFIG_PATH, and creates
-    the directory containing it if it does not exist. If the file does not exist,
-    it is created with a basic structure. The function then reads its contents into
-    a ConfigParser object for use by other functions.
+    """The init function initializes the configuration module.
+    It reads the default configuration file from DEFAULT_CONFIG_PATH, and
+    creates the directory containing it if it does not exist. If the file does
+    not exist, it is created with a basic structure. The function then reads
+    its contents into a ConfigParser object for use by other functions.
 
-    :param cfgpath: Specify a custom path to the config file, defaults to ""
-    :type cfgpath: str, optional
-    :return: None
+    Args:
+        cfgpath (:obj:`str`, *optional*): Specify a custom path to the config
+            file. Defaults to "".
     """
     if not cfgpath:
         cfgpath = constants.DEFAULT_CONFIG_PATH
@@ -69,17 +68,19 @@ def init(cfgpath: str = "") -> None:
 
 
 def get(section: str, option: str, fallback: str = "") -> str:
-    """
-    The get function is a helper function that retrieves the value of an option
-    in a given section. If no such option exists, it returns the fallback instead.
+    """The get function is a helper function that retrieves the value of an
+    option in a given section. If no such option exists, it returns the
+    fallback instead.
 
-    :param section: Specify the section of the config file to read from
-    :type section: str
-    :param option: Specify which option in the section you want to get
-    :type option: str
-    :param fallback: Set a default value if the option is not found in the config file, defaults to ""
-    :type fallback: str, optional
-    :return: The value of the option in the given section
-    :rtype: str
+    Args:
+        section (:obj:`str`): Specify the section of the config file to read
+            from.
+        option (:obj:`str`): Specify which option in the section you want to
+            get.
+        fallback (:obj:`str`, *optional*): Set a default value if the option
+            is not found in the config file. Defaults to "".
+
+    Returns:
+        :obj:`str`: The value of the option in the given section.
     """
     return config.get(section, option, fallback=fallback)

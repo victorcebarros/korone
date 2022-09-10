@@ -16,15 +16,16 @@ log = logging.getLogger(__name__)
 
 
 def get_language_code(message: Message) -> str:
-    """
-    The get_language_code function takes a message object as an argument and
+    """The get_language_code function takes a message object as an argument and
     returns the language code of the user who sent that message.
     If no language code is found, it defaults to "en" (English).
 
-    :param message: Get the message that was sent by the user
-    :type message: ~pyrogram.types.Message
-    :return: The language code of the user that sends a message
-    :rtype: str
+    Args:
+        message (:obj:`~pyrogram.types.Message`): Get the message that was
+            sent by the user.
+
+    Returns:
+        str: The language code of the user that sends a message.
     """
     language_code: str = "en"
     if message.from_user is None:

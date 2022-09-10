@@ -25,13 +25,13 @@ class Module:
     """Module structure."""
 
     name: str
-    "Module name"
+    """Module name"""
 
     author: str
-    "Module author"
+    """Module author"""
 
     has_help: bool
-    ":obj:`True` if the module has help, otherwise :obj:`False`"
+    """:obj:`True` if the module has help, otherwise :obj:`False`"""
 
 
 MODULES: list[Module] = [
@@ -40,15 +40,18 @@ MODULES: list[Module] = [
 
 
 def get_commands(module: ModuleType) -> Iterable[FunctionType]:
-    """
-    The get_commands function takes a module and returns an iterable of functions
-    that have been decorated with the @handler decorator. This function is used to
-    determine which commands are available for use by the client.
+    """The get_commands function takes a module and returns an iterable
+    of functions that have been decorated with the @handler decorator.
+    This function is used to determine which commands are available
+    for use by the client.
 
-    :param module: Get the module that contains the function
-    :type module: ~types.ModuleType
-    :return: An iterable of functions that have a `handlers` attribute
-    :rtype: ~typing.Iterable[FunctionType]
+    Args:
+        module (:obj:`~types.ModuleType`): Get the module that contains
+            the function.
+
+    Returns:
+        :class:`~typing.Iterable`\[:obj:`~types.FunctionType`]: An iterable of
+        functions that have a `handlers` attribute.
     """
     functions = filter(
         inspect.isfunction, map(lambda var: getattr(module, var), vars(module))
@@ -57,13 +60,14 @@ def get_commands(module: ModuleType) -> Iterable[FunctionType]:
 
 
 def load(app: Client) -> None:
-    """
-    The load function is responsible for loading
+    """The load function is responsible for loading
     all of the modules in the modules package.
 
-    :param app: Call the load function
-    :type app: ~pyrogram.Client
-    :return: None
+    Args:
+        app (:class:`~pyrogram.Client`): Call the load function.
+
+    Raises:
+        TypeError: If app is not initalized.
     """
     if app is None:
         log.critical("Pyrogram's Client app has not been initialized!")
@@ -85,15 +89,19 @@ def load(app: Client) -> None:
         commands: Iterable[FunctionType] = get_commands(component)
 
         def add(command: FunctionType) -> bool:
-            """
-            The add function adds a command to the bot.
-            It takes in a function, and then for each handler that is associated with it, adds it to the bot.
-            The add function returns True if successful or False if unsuccessful.
+            """The add function adds a command to the bot.
+            It takes in a function, and then for each handler that is
+            associated with it, adds it to the bot.
+            The add function returns True if successful or False if
+            unsuccessful.
 
-            :param command: Specify the command that is being added
-            :type command: ~types.FunctionType
-            :return: True if the command was loaded successfully, false otherwise
-            :rtype: bool
+            Args:
+                command (:class:`~types.FunctionType`): Specify the command
+                    that is being added.
+
+            Returns:
+                bool: :obj:`True` if the command was loaded
+                    successfully, :obj:`False` otherwise.
             """
             successful: bool = False
             for handler, group in command.handlers:  # type: ignore
