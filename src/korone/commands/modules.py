@@ -10,7 +10,7 @@ import logging
 from dataclasses import dataclass
 from importlib import import_module
 from types import FunctionType, ModuleType
-from typing import Iterable
+from typing import Any, Iterable
 
 from pyrogram import Client, filters
 from pyrogram.types import Message
@@ -18,7 +18,8 @@ from pyrogram.handlers.handler import Handler
 
 from korone import constants
 from korone.database import Database
-from korone.database.manager import Command, CommandManager
+from korone.database.manager import Command, CommandManager, Clause, Column
+from korone.utils.traverse import bfs_attr_search
 
 log = logging.getLogger(__name__)
 
@@ -38,23 +39,46 @@ MODULES: list[Module] = [
 ]
 
 
-COMMANDS: dict[str, dict[int, bool]] = {}
+"""
+Example structure
+>>> COMMANDS = {
+...     "command": {
+...         "chat": {
+...             1000: True,
+...             1001: False,
+...         },
+...         "children": [
+...             "cmd",
+...             "cm",
+...         ],
+...     },
+...     "cmd": {
+...         "parent": "command",
+...     },
+...     "cm": {
+...         "parent": "command",
+...     },
+... }
+"""
+COMMANDS: dict[str, Any] = {}
 
-# FIXME: Properly implement togglabilty of commands
-#        We should probably register commands on the load function
-#        and then enable / disable them
+
 def toggle(command: Command):
     """Toggles command."""
 
     if command.command not in COMMANDS:
-        COMMANDS[command.command] = {}
+        raise KeyError(f"Command '{command.command}' has not been registered!")
 
-    COMMANDS[command.command][command.chat_id] = command.state
+    if "parent" in COMMANDS[command.command]:
+        command.command = COMMANDS[command.command]["parent"]
+
+    COMMANDS[command.command]["chat"][command.chat_id] = command.state
 
     cmdmgr = CommandManager(Database())
 
     if command.state:
         cmdmgr.enable(command.command, command.chat_id)
+        return
 
     cmdmgr.disable(command.command, command.chat_id)
 
@@ -69,12 +93,15 @@ async def togglable(_, __, update: Message) -> bool:
     log.info("command: %s", command)
 
     if command not in COMMANDS:
+        return False
+
+    if "parent" in COMMANDS[command]:
+        command = COMMANDS[command]["parent"]
+
+    if update.chat.id not in COMMANDS[command]["chat"]:
         return True
 
-    if update.chat.id not in COMMANDS[command]:
-        return True
-
-    return COMMANDS[command][update.chat.id]
+    return COMMANDS[command]["chat"][update.chat.id]
 
 
 filters.togglable = filters.create(togglable)  # type: ignore
@@ -140,15 +167,16 @@ def load(app: Client) -> None:
 
         commands: Iterable[FunctionType] = get_commands(component)
 
-        def add(command: FunctionType) -> bool:
+        def register(command: FunctionType) -> bool:
             """
-            The add function adds a command to the bot.
-            It takes in a function, and then for each handler that is associated with it,
-            adds it to the bot.
-            The add function returns True if successful or False if unsuccessful.
+            Registers command handlers to Pyrogram.
 
-            :param command:FunctionType: Specify the command that is being added
-            :return: True if the command was loaded successfully, false otherwise
+            The argument is a function containing at least one handler.
+
+            :param command: Command to be added to Pyrogram
+            :type command:  FunctionType
+            :return:        True if successful, False otherwise
+            :rtype:         bool
             """
             successful: bool = False
             for handler, group in command.handlers:  # type: ignore
@@ -157,22 +185,41 @@ def load(app: Client) -> None:
                     log.info("\thandler: %s", handler)
                     log.info("\tgroup:   %d", group)
                     app.add_handler(handler, group)
+
                     successful = True
+
+                    if handler.filters is None:
+                        continue
+
+                    try:
+                        alias: list[str] = list(bfs_attr_search(handler.filters, "commands"))
+                    except AttributeError:
+                        continue
+
+                    parent: str = alias[0]
+                    children: list[str] = alias[1:]
+
+                    COMMANDS[parent] = {
+                        'chat': {},
+                        'children': children,
+                    }
+
+                    for cmd in children:
+                        COMMANDS[cmd] = {
+                            'parent': parent,
+                        }
+
+                    cmdmgr = CommandManager(Database())
+
+                    for each in cmdmgr.query(Clause(Column.COMMAND, parent)):
+                        COMMANDS[parent]['chat'][each.chat_id] = each.state
 
             return successful
 
         for command in commands:
             log.info("Adding command %s from module", command)
-            if not add(command):
+            if not register(command):
                 log.info("Could not add command %s", command)
                 continue
+
             log.info("Successfully added command %s", command)
-
-        # FIXME: Handle state of commands directly when registering them
-
-        cmdmgr = CommandManager(Database())
-
-        # loads the state of the commands
-        # in case they are disabled
-        for cmd in cmdmgr.query():
-            toggle(cmd)

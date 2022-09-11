@@ -112,8 +112,8 @@ def bfs_attr_search(root: Any, attr: str) -> Any:
             objs = map(lambda attr: getattr(obj, attr),
                        filter(lambda s: not s.startswith("_"),
                               vars(obj)))
-        except TypeError as err:
-            raise AttributeError(f"Could not find attribute {attr}") from err
+        except TypeError:
+            continue
 
         for neighbor in objs:
             if id(neighbor) not in visited:
