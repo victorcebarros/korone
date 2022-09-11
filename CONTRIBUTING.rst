@@ -73,7 +73,7 @@ For example, instead of doing this:
 
 Do this:
 
-``Fix: Corrects behavior y from funciton x``
+``Fix: Corrects behavior y from function x``
 
 Commits prior to this guideline will be kept, but new commits should follow these recommendations.
 
