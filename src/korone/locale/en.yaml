@@ -15,10 +15,14 @@ strings:
     description: "Enables a togglable command."
     message:
       success: "Successfully enabled the command!"
-      failure: "Failed to enable the command!"
+      failure:
+        emptycommand: "Failed to enable the command!"
+        invalidcommand: "There is no command named \"{}\"!"
   disable:
     brief: "Disable commands"
     description: "Disables a togglable command."
     message:
       success: "Successfully disabled the command!"
-      failure: "Failed to disable the command!"
+      failure:
+        emptycommand: "Failed to disable the command!"
+        invalidcommand: "There is no command named \"{}\"!"

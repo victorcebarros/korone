@@ -36,11 +36,19 @@ async def command_disable(_, message: Message) -> None:
 
     if command == "":
         await message.reply(
-            StringResource.get(language_code, "strings/disable/message/failure")
+            StringResource.get(language_code, "strings/enable/message/failure/emptycommand")
         )
         return
 
-    toggle(Command(command=command, chat_id=message.chat.id, state=False))
+    try:
+        toggle(Command(command=command, chat_id=message.chat.id, state=False))
+    except KeyError:
+        await message.reply(
+            StringResource
+            .get(language_code, "strings/disable/message/failure/invalidcommand")
+            .format(command)
+        )
+        return
 
     await message.reply(
         StringResource.get(language_code, "strings/disable/message/success")
@@ -57,11 +65,19 @@ async def command_enable(_, message: Message) -> None:
 
     if command == "":
         await message.reply(
-            StringResource.get(language_code, "strings/enable/message/failure")
+            StringResource.get(language_code, "strings/enable/message/failure/emptycommand")
         )
         return
 
-    toggle(Command(command=command, chat_id=message.chat.id, state=True))
+    try:
+        toggle(Command(command=command, chat_id=message.chat.id, state=True))
+    except KeyError:
+        await message.reply(
+            StringResource
+            .get(language_code, "strings/enable/message/failure/invalidcommand")
+            .format(command)
+        )
+        return
 
     await message.reply(
         StringResource.get(language_code, "strings/enable/message/success")
