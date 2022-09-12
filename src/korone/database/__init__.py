@@ -40,7 +40,8 @@ class Database:
 
     @classmethod
     def connect(cls, path: str = "") -> None:
-        """Connects to the database file indicated by path. If no path is
+        """
+        Connects to the database file indicated by path. If no path is
         given, it defaults to constants.DEFAULT_DBFILE_PATH.
 
         Args:
