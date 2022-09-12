@@ -23,7 +23,7 @@ def get_command_arg(message: Message) -> str:
     if pos == -1:
         return ""
 
-    return message.text[pos + 1:]
+    return message.text[pos + 1 :]
 
 
 @Client.on_message(filters.command("disable"))
@@ -36,7 +36,9 @@ async def command_disable(_, message: Message) -> None:
 
     if command == "":
         await message.reply(
-            StringResource.get(language_code, "strings/enable/message/failure/emptycommand")
+            StringResource.get(
+                language_code, "strings/enable/message/failure/emptycommand"
+            )
         )
         return
 
@@ -44,9 +46,9 @@ async def command_disable(_, message: Message) -> None:
         toggle(Command(command=command, chat_id=message.chat.id, state=False))
     except KeyError:
         await message.reply(
-            StringResource
-            .get(language_code, "strings/disable/message/failure/invalidcommand")
-            .format(command)
+            StringResource.get(
+                language_code, "strings/disable/message/failure/invalidcommand"
+            ).format(command)
         )
         return
 
@@ -65,7 +67,9 @@ async def command_enable(_, message: Message) -> None:
 
     if command == "":
         await message.reply(
-            StringResource.get(language_code, "strings/enable/message/failure/emptycommand")
+            StringResource.get(
+                language_code, "strings/enable/message/failure/emptycommand"
+            )
         )
         return
 
@@ -73,9 +77,9 @@ async def command_enable(_, message: Message) -> None:
         toggle(Command(command=command, chat_id=message.chat.id, state=True))
     except KeyError:
         await message.reply(
-            StringResource
-            .get(language_code, "strings/enable/message/failure/invalidcommand")
-            .format(command)
+            StringResource.get(
+                language_code, "strings/enable/message/failure/invalidcommand"
+            ).format(command)
         )
         return
 

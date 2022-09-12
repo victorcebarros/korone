@@ -13,12 +13,12 @@ from types import FunctionType, ModuleType
 from typing import Any, Iterable
 
 from pyrogram import Client, filters
-from pyrogram.types import Message
 from pyrogram.handlers.handler import Handler
+from pyrogram.types import Message
 
 from korone import constants
 from korone.database import Database
-from korone.database.manager import Command, CommandManager, Clause, Column
+from korone.database.manager import Clause, Column, Command, CommandManager
 from korone.utils.traverse import bfs_attr_search
 
 log = logging.getLogger(__name__)
@@ -115,9 +115,7 @@ filters.togglable = filters.create(togglable)  # type: ignore
 
 # TODO: Move this to some korone.util module
 def get_command_name(message: Message) -> str:
-    """Get command name.
-
-    """
+    """Get command name."""
     if message.text is None:
         return ""
 
@@ -208,30 +206,35 @@ def load(app: Client) -> None:
 
                     log.debug("Checking for commands filter...")
                     try:
-                        alias: list[str] = list(bfs_attr_search(handler.filters, "commands"))
+                        alias: list[str] = list(
+                            bfs_attr_search(handler.filters, "commands")
+                        )
                     except AttributeError:
                         continue
 
-                    log.info("Found \"%s\" command(s)!", alias)
+                    log.info('Found "%s" command(s)!', alias)
                     parent: str = alias[0]
                     children: list[str] = alias[1:]
 
                     COMMANDS[parent] = {
-                        'chat': {},
-                        'children': children,
+                        "chat": {},
+                        "children": children,
                     }
 
                     for cmd in children:
                         COMMANDS[cmd] = {
-                            'parent': parent,
+                            "parent": parent,
                         }
 
                     cmdmgr = CommandManager(Database())
 
                     for each in cmdmgr.query(Clause(Column.COMMAND, parent)):
-                        log.debug("Fetched chat state from the database: %s => %s",
-                                  each.chat_id, str(each.state))
-                        COMMANDS[parent]['chat'][each.chat_id] = each.state
+                        log.debug(
+                            "Fetched chat state from the database: %s => %s",
+                            each.chat_id,
+                            str(each.state),
+                        )
+                        COMMANDS[parent]["chat"][each.chat_id] = each.state
 
                     log.debug("New command node: %s", COMMANDS[parent])
 

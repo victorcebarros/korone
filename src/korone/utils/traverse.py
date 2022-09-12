@@ -118,9 +118,10 @@ def bfs_attr_search(root: Any, attr: str) -> Any:
             return getattr(obj, attr)
 
         try:
-            objs = map(lambda attr: getattr(obj, attr),
-                       filter(lambda s: not s.startswith("_"),
-                              vars(obj)))
+            objs = map(
+                lambda attr: getattr(obj, attr),
+                filter(lambda s: not s.startswith("_"), vars(obj)),
+            )
         except TypeError:
             continue
 
