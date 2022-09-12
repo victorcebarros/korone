@@ -83,7 +83,59 @@ class BaseClause(ABC):
 
 @dataclass
 class Clause(BaseClause):
-    """Single SQL Clause."""
+    """
+    Represents a single SQL Clause.
+
+    SQL Clauses are an essential part of SQL Queries, you use them to narrow
+    results when querying for data, or specify new values for columns when
+    updating the database.
+
+    They are used in various parts of the *Manager classes, whether when you want
+    to query, update or delete something.
+
+    Assuming Column.NAME and Column.AGE exist, and that we have the
+    following table, which is hypothetically controlled by the User manager:
+
+    table: Users
+    +----+--------+-----+
+    | id | name   | age |
+    +----+--------+-----+
+    |  1 | Lewis  |  28 |
+    +----+--------+-----+
+    |  2 | Markus |  35 |
+    +----+--------+-----+
+    |  3 | Lukas  |  22 |
+    +----+--------+-----+
+    |  4 | Antoni |  23 |
+    +----+--------+-----+
+
+    We can query for all users which are over 24 with the following:
+
+    >>> um = UserManager(Database())
+    >>> users_above_24 = um.query(
+    ...     Clause(column=Column.AGE, operator=Operator.GT, data=24)
+    ... )
+
+    This would be the same as running the following:
+
+    >>> users_above_24 = map(
+    ...     UserManager.cast,
+    ...     Database.execute("SELECT * FROM Users WHERE age > 24")
+    ... )
+
+    As you can see, they basically encapsulate the clause and pass it to
+    the appropriate place within the SQL Statement. It is noteworthy that
+    Clauses support &, | and ~ for, respectively, AND, OR and NOT SQL
+    Operators, therefore the following can be done:
+
+    >>> clause = (Clause(column=Column.AGE, data=22)
+    ...             & Clause(column=Column.NAME, data="Lukas"))
+    ... clause.eval(columns)  # column names for table Users
+    ('age = ? AND name = ?', (22, "Lukas"))
+
+    Note the clause does not insert the data values directly into the
+    qmark placeholders.
+    """
 
     column: Column
     """Column to be compared."""
