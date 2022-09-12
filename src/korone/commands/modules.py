@@ -201,14 +201,17 @@ def load(app: Client) -> None:
 
                     successful = True
 
+                    log.debug("Detecting if handler has filters...")
                     if handler.filters is None:
                         continue
 
+                    log.debug("Checking for commands filter...")
                     try:
                         alias: list[str] = list(bfs_attr_search(handler.filters, "commands"))
                     except AttributeError:
                         continue
 
+                    log.info("Found \"%s\" command(s)!", alias)
                     parent: str = alias[0]
                     children: list[str] = alias[1:]
 
@@ -225,7 +228,11 @@ def load(app: Client) -> None:
                     cmdmgr = CommandManager(Database())
 
                     for each in cmdmgr.query(Clause(Column.COMMAND, parent)):
+                        log.debug("Fetched chat state from the database: %s => %s",
+                                  each.chat_id, str(each.state))
                         COMMANDS[parent]['chat'][each.chat_id] = each.state
+
+                    log.debug("New command node: %s", COMMANDS[parent])
 
             return successful
 
