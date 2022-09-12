@@ -41,6 +41,7 @@ class Module:
 MODULES: list[Module] = [
     Module(name="hello", author="Korone Devs", has_help=False),
     Module(name="toggle", author="Korone Devs", has_help=False),
+    Module(name="ping", author="Korone Devs", has_help=False),
 ]
 
 
