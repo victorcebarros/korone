@@ -19,40 +19,38 @@ class DatabaseError(Exception):
 
 
 class Database:
-    """Base class for database."""
+    """Database wrapper."""
 
     path: str
-    """Path to the database file."""
+    """Path to database file."""
 
     conn: Connection
-    """Connection to the database."""
+    """Database connection."""
 
     @classmethod
     def isopen(cls) -> bool:
-        """The isopen function is a class method that is used to mark class as
-        having an open connection. It's purpose is to make sure that the
-        connection isn't closed before the class' :obj:`__del__` method
-        is called, which would close the database connection.
+        """
+        Verifies if the database is open.
 
         Returns:
-            bool: :obj:`True` if the class has an attribute named conn and it
-            is an instance of connection.
+            bool: :obj:`True` if database is ready to use,
+                :obj:`False` otherwise.
         """
         return hasattr(cls, "conn") and isinstance(cls.conn, Connection)
 
     @classmethod
     def connect(cls, path: str = "") -> None:
-        """The connect function is used to connect to the database. It takes
-        one argument, which is the path of the database file. If no path is
-        given, it will default to the constant DEFAULT_DBFILE_PATH.
+        """Connects to the database file indicated by path. If no path is
+        given, it defaults to constants.DEFAULT_DBFILE_PATH.
 
         Args:
             path (:obj:`str`, *optional*): Specify the path to the database
-                file. Defaults to "".
+                file. Defaults to :obj:`korone.constants.DEFAULT_DBFILE_PATH`.
 
         Raises:
             DatabaseError: If the database is already connected.
         """
+
         if cls.isopen():
             raise DatabaseError("Database is already connected!")
 
@@ -67,9 +65,9 @@ class Database:
 
     @classmethod
     def setup(cls) -> None:
-        """The setup function is called when the database is first initialized.
-        It creates all of the tables and indexes that are required for
-        operation.
+        """
+        Sets up database tables needed for other database-related operations,
+        essentially initializng it.
 
         Raises:
             DatabaseError: If the database is not connected.
@@ -92,15 +90,16 @@ class Database:
 
     @classmethod
     def execute(cls, sql: str, parameters: tuple = (), /) -> Cursor:
-        """The execute function is a class method of the
-        :class:`~sqlite3.Connection` class. It is used to execute
-        SQL statements on the database connection that was opened
-        by the connect function.
+        """
+        Executes SQL statements on the open database connection.
+
+        The parameters are similar, if not equal, to those in the
+        :class:`~sqlite3.Connection` class.
 
         Args:
-            sql (:obj:`str`): Pass in the sql statement that you want to execute
-            parameters (:obj:`tuple`, *optional*): Pass a tuple of arguments
-                to the sql statement. Defaults to ().
+            sql (:obj:`str`): SQL Statement to execute
+            parameters (:obj:`tuple`, *optional*): Replaces qmark
+                style placeholders in SQL Statement. Defaults to ().
 
         Raises:
             DatabaseError: If the database is not connected.
@@ -118,7 +117,8 @@ class Database:
 
     @classmethod
     def close(cls) -> None:
-        """The close function closes the database connection.
+        """
+        Closes the database connection.
 
         Raises:
             DatabaseError: If the database is not connected.
