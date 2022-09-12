@@ -60,6 +60,8 @@ For the commit types, the following table will help you decide which one you sho
 +-------------+--------------------------+
 | Fix         | Bugfixes                 |
 +-------------+--------------------------+
+| Merge       | Merge related changes    |
++-------------+--------------------------+
 | Refactor    | Refactoring              |
 +-------------+--------------------------+
 | Style       | Style related changes    |
