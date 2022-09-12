@@ -9,11 +9,11 @@ from typing import Any, Union
 
 
 def traverse(tree: Union[dict, list], path: str, separator: str = "/") -> Any:
-    """
-    The traverse function takes a tree and a path, and returns the value at that
-    path. The tree can be either a list or dictionary, but the path must be valid
-    for that type of tree. For example:
+    """The traverse function takes a tree and a path, and returns the value at
+    that path. The tree can be either a list or dictionary, but the path must
+    be valid for that type of tree.
 
+    Example:
         .. code-block:: python
 
             >>> root = {
@@ -35,10 +35,19 @@ def traverse(tree: Union[dict, list], path: str, separator: str = "/") -> Any:
             >>> traverse(root, "fibonacci/4")
             5
 
-    :param tree:Union[dict, list]: The tree to traverse
-    :param path:str: Specify the path to the node that we want to access
-    :param separator:str="/": Specify the path separator
-    :return: The -value +node at that path.
+    Args:
+        tree (:class:`~typing.Union`\\[:obj:`dict`, :obj:`list`]): The tree to
+            traverse.
+        path (:obj:`str`): Specify the path to the node that we want to access.
+        separator (:obj:`str`, *optional*): Specify the path separator.
+            Defaults to "/".
+
+    Raises:
+        ValueError: If index is not an integer.
+        KeyError: If trying to access a non-existing nodes.
+
+    Returns:
+        :obj:`~typing.Any`: The node at that path.
     """
     if tree is None:
         return None

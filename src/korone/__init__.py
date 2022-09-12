@@ -1,5 +1,6 @@
 """
-Korone is a simple, yet powerful, multi-purpose Telegram Bot.
+This package provides a complete interface for
+a Telegram bot using the Pyrogram library.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause

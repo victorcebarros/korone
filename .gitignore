@@ -6,6 +6,9 @@ __pycache__/
 dist/
 *.egg-info/
 
+docs/build/
+docs/source/_build/
+
 downloads/
 korone.conf
 *.session*

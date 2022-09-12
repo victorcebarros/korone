@@ -26,11 +26,16 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class Module:
-    """Module metadata."""
+    """Module structure."""
 
     name: str
+    """Module name"""
+
     author: str
+    """Module author"""
+
     has_help: bool
+    """:obj:`True` if the module has help, otherwise :obj:`False`"""
 
 
 MODULES: list[Module] = [
@@ -126,13 +131,18 @@ def get_command_name(message: Message) -> str:
 
 
 def get_commands(module: ModuleType) -> Iterable[FunctionType]:
-    """
-    The get_commands function takes a module and returns an iterable of functions
-    that have been decorated with the @handler decorator. This function is used to
-    determine which commands are available for use by the client.
+    """The get_commands function takes a module and returns an iterable
+    of functions that have been decorated with the @handler decorator.
+    This function is used to determine which commands are available
+    for use by the client.
 
-    :param module:ModuleType: Get the module that contains the function
-    :return: An iterable of functions that have a `handlers` attribute
+    Args:
+        module (:obj:`~types.ModuleType`): Get the module that contains
+            the function.
+
+    Returns:
+        :class:`~typing.Iterable`\[:obj:`~types.FunctionType`]: An iterable of
+        functions that have a `handlers` attribute.
     """
     functions = filter(
         inspect.isfunction, map(lambda var: getattr(module, var), vars(module))
@@ -141,12 +151,14 @@ def get_commands(module: ModuleType) -> Iterable[FunctionType]:
 
 
 def load(app: Client) -> None:
-    """
-    The load function is responsible for loading
+    """The load function is responsible for loading
     all of the modules in the modules package.
 
-    :param app:Client: Call the load function
-    :return: None
+    Args:
+        app (:class:`~pyrogram.Client`): Call the load function.
+
+    Raises:
+        TypeError: If app is not initalized.
     """
     if app is None:
         log.critical("Pyrogram's Client app has not been initialized!")
@@ -173,10 +185,11 @@ def load(app: Client) -> None:
 
             The argument is a function containing at least one handler.
 
-            :param command: Command to be added to Pyrogram
-            :type command:  FunctionType
-            :return:        True if successful, False otherwise
-            :rtype:         bool
+            Args:
+                command (:class:`~types.FunctionType`): Function containing handler
+
+            Returns:
+                bool: :obj:`True` if successful, :obj:`False` otherwise.
             """
             successful: bool = False
             for handler, group in command.handlers:  # type: ignore

@@ -1,5 +1,5 @@
 """
-``korone.locale`` is the package that manages Korone's locales.
+The ``korone.locale`` is the package that manages Korone's locales.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
@@ -21,17 +21,22 @@ class StringResource:
     """Get locale-specific string resources."""
 
     languages: dict[str, Any] = {}
+    """The languages dictionary."""
+
     dirpath: str = path.dirname(__file__)
+    """The directory path of the package."""
 
     @classmethod
     def load(cls, language_code: str) -> dict[str, str]:
-        """
-        The load function loads a language pack for the specified language code.
-        If the file does not exist, it will load English instead.
+        """The load function loads a language pack for the specified language
+        code. If the file does not exist, it will load English instead.
 
-        :param cls: Access the class variables of languagepackloader
-        :param language_code:str: Specify the language code to load
-        :return: A dictionary of the language strings
+        Args:
+            language_code (:obj:`str`): Specify the language code to load.
+
+        Returns:
+            :obj:`dict`\\[:obj:`str`, :obj:`str`]: A dictionary of the
+                language strings.
         """
         if language_code in cls.languages:
             return cls.languages[language_code]
@@ -58,16 +63,18 @@ class StringResource:
 
     @classmethod
     def get(cls, language_code: str, resource: str, default: str = "") -> str:
-        """
-        The get function is a helper function that retrieves the string from
+        """The get function is a helper function that retrieves the string from
         the resource file. If it is not found, then it will attempt to retrieve
-        it from the English resource file. If that fails, then it returns the default.
+        it from the English resource file. If that fails, then it returns the
+        default.
 
-        :param cls: Call the load function from the class
-        :param language_code:str: Specify the language of the string that is being looked up
-        :param resource:str: Specify the resource that is being loaded
-        :param default:str="": Set a default value if the resource is not found
-        :return: The string at the given resource
+        Args:
+            language_code (:obj:`str`): Specify the language of the string that is being looked up.
+            resource (:obj:`str`): Specify the resource that is being loaded.
+            default (:obj:`str`, *optional*): Set a default value if the resource is not found. Defaults to "".
+
+        Returns:
+            :obj:`str`: The string at the given resource.
         """
         string: str
 

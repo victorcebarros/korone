@@ -15,13 +15,15 @@ log = logging.getLogger(__name__)
 
 
 def main(argv: list[str]) -> int:
-    """
-    The main function is the entry point for the program.
-
+    """The main function is the entry point for the program.
     It creates a new instance of an App object and runs it.
 
-    :param argv:list[str]: Pass command line arguments to the program
-    :return: The number of arguments passed to it
+    Args:
+        argv (:obj:`list`\\[:obj:`str`]): Pass command line arguments to the
+            program.
+
+    Returns:
+        :obj:`int`: The number of arguments passed to it.
     """
     log.info("Program started")
 

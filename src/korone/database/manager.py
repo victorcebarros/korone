@@ -1,5 +1,5 @@
 """
-Manages Korone's Database.
+This module contains all the Korone database managers.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
@@ -24,28 +24,48 @@ class Column(Enum):
     """Selects column for tables in database."""
 
     UUID = auto()
+    """Universally Unique Identifier column."""
+
     LANGUAGE = auto()
+    """Chat language column."""
+
     REGISTRYDATE = auto()
+    """Chat registration date column."""
+
     CHATTYPE = auto()
+    """Chat type column."""
+
     COMMAND = auto()
+    """Command column."""
+
     STATE = auto()
+    """Command state column."""
 
 
 class Operator(Enum):
     """Operator to be applied in a clause on a SQL Statement."""
 
     LT = "<"
+    """Less than"""
+
     EQ = "="
+    """Equal to."""
+
     GT = ">"
+    """Greater than."""
+
     LE = "<="
+    """Less than or equal to."""
+
     GE = ">="
+    """Greater than or equal to."""
 
     def __str__(self) -> str:
         return str(self.value)
 
 
 class BaseClause(ABC):
-    """Base Clause for all Clauses."""
+    """Base class for all Clauses."""
 
     def __and__(self, other):
         return AndClause(self, other)
@@ -58,7 +78,7 @@ class BaseClause(ABC):
 
     @abstractmethod
     def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
-        """Evaluates SQL Clauses"""
+        """Evaluate the clause."""
 
 
 @dataclass
@@ -66,30 +86,42 @@ class Clause(BaseClause):
     """Single SQL Clause."""
 
     column: Column
+    """Column to be compared."""
+
     data: Any = None
+    """Data to be compared."""
+
     operator: Operator = Operator.EQ
+    """Operator to be applied in a clause on a SQL Statement."""
 
     def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        """Evaluate the clause."""
         return f"{columns[self.column]} {self.operator} ?", (self.data,)
 
 
 class AndClause(BaseClause):
+    """AND Clause."""
+
     def __init__(self, base: Clause, other: Clause):
         self.base = base
         self.other = other
 
     def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        """Evaluate the clause."""
         bclause, bdata = self.base.eval(columns)
         oclause, odata = self.other.eval(columns)
         return f"({bclause} AND {oclause})", (*bdata, *odata)
 
 
 class OrClause(BaseClause):
+    """OR Clause."""
+
     def __init__(self, base: Clause, other: Clause):
         self.base = base
         self.other = other
 
     def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        """Evaluate the clause."""
         bclause, bdata = self.base.eval(columns)
         oclause, odata = self.other.eval(columns)
         return f"({bclause} OR {oclause})", (*bdata, *odata)
@@ -102,6 +134,7 @@ class InvertClause(BaseClause):
         self.base = base
 
     def eval(self, columns: dict[Column, str]) -> tuple[str, tuple[Any, ...]]:
+        """Evaluate the clause."""
         bclause, bdata = self.base.eval(columns)
         return f"(NOT {bclause})", (*bdata,)
 
@@ -110,7 +143,7 @@ T = TypeVar("T")
 
 
 class Manager(ABC, Generic[T]):
-    """Manager class."""
+    """Base class for all database managers."""
 
     def __init__(self, database: Database):
         if database is None:
@@ -123,32 +156,39 @@ class Manager(ABC, Generic[T]):
 
     @abstractmethod
     def insert(self, item: T) -> None:
-        """
-        The insert function inserts an item into the list.
+        """The insert function inserts an item into the list.
 
-        :param self: Refer to the current instance of the class
-        :param item:T: Type of data and the item that is being inserted into the database.
-        :return: The item that was inserted into the list
+        Args:
+            item (T): Type of data and the item that is being inserted into
+                the database.
         """
 
     @abstractmethod
     def cast(self, row: Row) -> T:
-        """
-        The cast function is used to convert a row into the desired type.
+        """The cast function is used to convert a row into the desired type.
 
-        :param self: Access the attributes and methods of the class
-        :param row:Row: Indicate the row that is being casted
-        :return: The row as a dictionary
+        Args:
+            row (:class:`sqlite3.Row`): Indicate the row that is being casted.
+
+        Returns:
+            T: The row as dictionary.
         """
 
     def query(self, search: Clause | None = None) -> Iterable[T]:
-        """
-        The query function is a method of the Manager class. It takes a Clause
-        as an argument. If search is None, it returns all rows in the table.
+        """The query function is a method of the Manager class. It takes a
+        Clause as an argument. If search is None, it returns all rows
+        in the table.
 
-        :param self: Self
-        :param search:Clause: Search Clause
-        :return: An iterable with all the objects that match the query
+        Args:
+            search (:class:`Clause` | :obj:`None`, *optional*): Search Clause.
+                Defaults to None.
+
+        Raises:
+            RuntimeError: If the manager is used directly.
+
+        Returns:
+            :class:`~typing.Iterable`\\[T]: An iterable with all the objects
+                that match the query.
         """
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
@@ -164,15 +204,17 @@ class Manager(ABC, Generic[T]):
         )
 
     def update(self, update: Clause, condition: Clause) -> None:
-        """
-        The update function is a method of the Manager class. It takes an update Clause,
-        which tells which columns should be updated. It also takes a condition clause,
-        which matches the rows it should update.
+        """The update function is a method of the Manager class. It takes
+        an update Clause, which tells which columns should be updated. It also
+        takes a condition clause, which matches the rows it should update.
 
-        :param self: Self
-        :param update:Clause: Column to be updated
-        :param condition:Clause: Condition to match the rows
-        :return: None
+        Args:
+            update (:class:`Clause`): Column to be updated.
+            condition (:class:`Clause`): Condition to match the rows.
+
+        Raises:
+            RuntimeError: If the manager is used directly.
+            AttributeError: If condition data is empty.
         """
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
@@ -190,12 +232,14 @@ class Manager(ABC, Generic[T]):
         )
 
     def delete(self, condition: Clause) -> None:
-        """
-        The delete function is used to delete rows from the database.
+        """The delete function is used to delete rows from the database.
 
-        :param self: Self
-        :param condition:Clause: Condition to match the rows
-        :return: None
+        Args:
+            condition (:class:`Clause`): Condition to match the rows.
+
+        Raises:
+            RuntimeError: If the manager is used directly.
+            AttributeError: If condition data is empty.
         """
         if not self.valid():
             raise RuntimeError("You should not use the Manager class directly!")
@@ -208,12 +252,12 @@ class Manager(ABC, Generic[T]):
         self.database.execute(f"DELETE FROM {self.table} WHERE {clause}", data)
 
     def valid(self) -> bool:
-        """
-        The valid function returns True if the table and columns are not empty.
-        Otherwise, it returns False.
+        """The valid function returns :obj:`True` if the table and columns are
+        not empty. Otherwise, it returns :obj:`False`.
 
-        :param self: Access the attributes and methods of the class
-        :return: A boolean value
+        Returns:
+            :obj:`bool`: Boolean indicating if the table and columns are
+                not empty.
         """
         return not (self.table == "" or not self.columns)
 
@@ -232,15 +276,17 @@ class ChatManager(Manager[Chat]):
         }
 
     def insert(self, item: Chat) -> None:
-        """
-        The insert function inserts a new chat into the database.
+        """The insert function inserts a new chat into the database.
         It accepts an item, which is expected to be of type Chat.
         If improperly initialized Chat Objects, then it will raise
-        a RuntimeError.
+        a :obj:`RuntimeError`.
 
-        :param self: Access the class attributes
-        :param item:Chat: Pass the chat object to the insert function
-        :return: None
+        Args:
+            item (:class:`~pyrogram.types.Chat`): Pass the chat object to the
+                insert function.
+
+        Raises:
+            RuntimeError: If chat object is :obj:`None`.
         """
         if item.id is None:
             raise RuntimeError("chat must not be None!")
@@ -257,13 +303,16 @@ class ChatManager(Manager[Chat]):
         )
 
     def cast(self, row: Row) -> Chat:
-        """
-        The cast function takes a row from the database and returns a Chat object.
-        The cast function is used to convert rows from the database into objects of type Chat.
+        """The cast function takes a row from the database and returns
+        a Chat Chat. The cast function is used to convert rows from
+        the database into objects of type Chat.
 
-        :param self: Access the class attributes
-        :param row:Row: Access the values in the row
-        :return: A chat object with the values from the row
+        Args:
+            row (:class:`~sqlite3.Row`): Access the values in the row.
+
+        Returns:
+            :class:`~pyrogram.types.Chat`: A chat object with the values from
+            the row.
         """
         chat: Chat = Chat(
             id=row[self.columns[Column.UUID]], type=row[self.columns[Column.CHATTYPE]]
@@ -289,15 +338,14 @@ class UserManager(Manager[User]):
         }
 
     def insert(self, item: User) -> None:
-        """
-        The insert function inserts a new user into the database.
-        It takes two arguments: item and self.
-        item is the user to be inserted, it must be a properly initialized User object.
-        self is the table object that contains this function.
+        """The insert function inserts a new user into the database.
 
-        :param self: Access the attributes and methods of the class in python
-        :param item:User: Tell the function what type of data it is expecting
-        :return: None
+        Args:
+            item (:class:`~pyrogram.types.User`): the user to be inserted, it
+                must be a properly initialized User object.
+
+        Raises:
+            RuntimeError: If item.id is :obj:`None`.
         """
         if item.id is None:
             raise RuntimeError("item.id must not be None!")
@@ -312,14 +360,15 @@ class UserManager(Manager[User]):
         )
 
     def cast(self, row: Row) -> User:
-        """
-        The cast function is a helper function that takes in a row and returns
-        a User object. It is used by the Database class to convert rows into
-        User objects.
+        """The cast function is a helper function that takes in a row and
+        returns a User object. It is used by the Database class to convert
+        rows into User objects.
 
-        :param self: Access the class attributes
-        :param row:Row: Access the values in the row
-        :return: A user object
+        Args:
+            row (:class:`~sqlite3.Row`): Access the values in the row.
+
+        Returns:
+            :class:`~pyrogram.types.User`: A Pyrogram user object.
         """
         user: User = User(
             id=row[self.columns[Column.UUID]],
@@ -333,11 +382,16 @@ class UserManager(Manager[User]):
 
 @dataclass
 class Command:
-    """Simple command structure."""
+    """Command structure."""
 
     command: str
+    """The command."""
+
     chat_id: int
+    """Chat ID."""
+
     state: bool
+    """Command state."""
 
 
 class CommandManager(Manager[Command]):
@@ -354,14 +408,17 @@ class CommandManager(Manager[Command]):
         }
 
     def insert(self, item: Command) -> None:
-        """
-        The insert function inserts a new item into the database.
+        """The insert function inserts a new item into the database.
         It accepts an item as its parameter, and returns None.
-        The insert function raises RuntimeError if the chat_id of the given item is None.
+        The insert function raises RuntimeError if the chat_id of
+        the given item is None.
 
-        :param self: Access the class attributes
-        :param item:Command: Tell the database what kind of data is going to be inserted
-        :return: None
+        Args:
+            item (:class:`Command`): Tell the database what kind of data is
+                going to be inserted.
+
+        Raises:
+            RuntimeError: If item.chat_id is :obj:`None`.
         """
         if item.chat_id is None:
             raise RuntimeError("item.chat_id must not be None!")
@@ -378,14 +435,15 @@ class CommandManager(Manager[Command]):
         )
 
     def cast(self, row: Row) -> Command:
-        """
-        The cast function is a helper function that converts the row object into
-        a Command object. This is necessary because the database returns rows as
-        tuples, but we want to work with objects.
+        """The cast function is a helper function that converts the row object
+        into a Command object. This is necessary because the database returns
+        rows as tuples, but we want to work with objects.
 
-        :param self: Reference the class object
-        :param row:Row: Access the values in the row
-        :return: A command object
+        Args:
+            row (:class:`~sqlite3.Row`): Access the values in the row.
+
+        Returns:
+            :class:`Command`: A command object.
         """
         return Command(
             command=row[self.columns[Column.COMMAND]],
@@ -394,7 +452,15 @@ class CommandManager(Manager[Command]):
         )
 
     def toggle(self, command: str, chat_id: int, state: bool) -> None:
-        """Toggles command state."""
+        """The toggle function is used to toggle the state of a command.
+
+        Args:
+            command (:obj:`str`): The command to have its state changed.
+            chat_id (:obj:`int`): Identifier of the chat that the command will
+                be toggled.
+            state (:obj:`bool`): Determine whether the command should be
+                enabled or disabled.
+        """
         query = Clause(Column.COMMAND, command) & Clause(Column.UUID, chat_id)
         result = list(self.query(query))
 
@@ -405,15 +471,37 @@ class CommandManager(Manager[Command]):
         self.update(Clause(Column.STATE, state), query)
 
     def enable(self, command: str, chat_id: int) -> None:
-        """Enables command."""
+        """The enable function enables a command for a given chat.
+
+        Args:
+            command (:obj:`str`): The command to be enabled.
+            chat_id (:obj:`int`): Identifier of the chat that the command will
+                be enabled.
+        """
         self.toggle(command, chat_id, True)
 
     def disable(self, command: str, chat_id: int) -> None:
-        """Disables command."""
+        """The disable function disables a command a given chat.
+
+        Args:
+            command (:obj:`str`): The command to be disabled.
+            chat_id (:obj:`int`): Identifier of the chat that the command will
+                be disabled.
+        """
         self.toggle(command, chat_id, False)
 
     def is_enabled(self, command: str, chat_id: int) -> bool:
-        """Returns True if enabled, False otherwise."""
+        """The is_enabled function checks if a command is enabled for a chat.
+
+        Args:
+            command (:obj`str`): The command to be checked.
+            chat_id (:obj:`int`): Identifier of the chat that the command will
+                be checked.
+
+        Returns:
+            :obj:`bool`: :obj:`True` if the command is enabled
+                otherwise :obj:`False`.
+        """
         query = Clause(Column.COMMAND, command) & Clause(Column.UUID, chat_id)
 
         result = list(self.query(query))

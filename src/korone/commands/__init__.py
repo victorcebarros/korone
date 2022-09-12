@@ -1,6 +1,6 @@
 """
-``korone.commands`` is responsible for starting Pyrogram's Client and
-handling all the commands modules.
+The ``korone.commands`` package is responsible for starting
+Pyrogram's Client and handling with all the commands modules.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
@@ -19,31 +19,42 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class AppParameters:
-    """Pyrogram's Client parameters."""
+    """:obj:`pyrogram.Client` parameters."""
 
     api_hash: str
+    """API hash."""
+
     api_id: str
+    """API ID."""
+
     bot_token: str
+    """Bot token."""
+
     in_memory: bool = True
+    """:obj:`True` if the Pyrogram session
+    should be in memory, otherwise :obj:`False`."""
+
     ipv6: bool = False
+    """:obj:`True` if the client should use IPv6, otherwise :obj:`False`."""
+
     name: str = constants.DEFAULT_NAME
+    """Name of the client."""
+
     workers: int = constants.DEFAULT_WORKERS
+    """Number of workers to be used by the client."""
 
 
 class App:
-    """Handles Pyrogram's Client and Korone's Database."""
+    """Handles :obj:`~pyrogram.Client` and :obj:`~korone.database.Database`."""
 
     def __init__(self, parameters: AppParameters):
         self.app: Client | None = None
         self.parameters: AppParameters = parameters
 
     def setup(self) -> None:
-        """
-        The setup function is called when the module is loaded. It creates a new
-        Pyrogram Client object and stores it in self.app for later use.
-
-        :param self: Access the attributes and methods of the class in python
-        :return: None
+        """The setup function is called when the module is loaded.
+        It creates a new :obj:`~pyrogram.Client` object and stores
+        it in self.app for later use.
         """
         log.debug("Creating Pyrogram Client object")
         self.app = Client(
@@ -60,13 +71,13 @@ class App:
         modules.load(self.app)
 
     def run(self) -> None:
-        """
-        The run function is the main entry point for the client. It is responsible
-        for initializing and running the application, as well as handling any errors
-        that may occur during execution.
+        """The run function is the main entry point for the client.
+        It is responsible for initializing and running the application,
+        as well as handling any errors that may occur during execution.
 
-        :param self: Access the attributes and methods of the class inside a method
-        :return: None
+        Raises:
+            :obj:`RuntimeError`: If the :obj:`~pyrogram.Client` is
+                not initialized.
         """
         if self.app is None:
             raise RuntimeError("App is not initialized!")
