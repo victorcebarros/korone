@@ -15,6 +15,15 @@ from korone.locale import StringResource
 
 
 def get_command_arg(message: Message) -> str:
+    """Get the command argument from the message.
+
+    Args:
+        message (:class:`~pyrogram.types.Message`): The message to get the
+            command argument from.
+
+    Returns:
+        :obj:`str`: The command argument.
+    """
     if message is None or message.text is None:
         return ""
 
@@ -28,6 +37,10 @@ def get_command_arg(message: Message) -> str:
 
 @Client.on_message(filters.command("disable"))
 async def command_disable(_, message: Message) -> None:
+    """Disable a command in the current chat.
+
+    Send `/disable <command>` in the chat to disable a command.
+    """
     if message.chat is None or message.chat.id is None:
         return
 
@@ -59,6 +72,10 @@ async def command_disable(_, message: Message) -> None:
 
 @Client.on_message(filters.command("enable"))
 async def command_enable(_, message: Message) -> None:
+    """Enable a command in the current chat.
+
+    Send `/enable <command>` in the chat to enable a command.
+    """
     if message.chat is None or message.chat.id is None:
         return
 

@@ -9,6 +9,23 @@ korone.commands.hello module
 
 .. automodule:: korone.commands.hello
    :members:
+   :undoc-members:
+   :show-inheritance:
+
+korone.commands.ping module
+---------------------------
+
+.. automodule:: korone.commands.ping
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+korone.commands.toggle module
+-----------------------------
+
+.. automodule:: korone.commands.toggle
+   :members:
+   :undoc-members:
    :show-inheritance:
 
 korone.commands.modules module
