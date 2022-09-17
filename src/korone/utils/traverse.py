@@ -78,9 +78,12 @@ def bfs_attr_search(root: Any, attr: str) -> Any:
     """
     Searches for attribute in object using the BFS algorithm.
 
-    Note: attributes starting with '_' are ignored.
+    .. Note::
+        attributes starting with '_' are ignored.
 
+    Example:
         .. code-block:: python
+
             >>> def fun():
             ...     pass
             >>> fun.hello = lambda x: x * 2
@@ -94,15 +97,15 @@ def bfs_attr_search(root: Any, attr: str) -> Any:
             >>> bfs_attr_search(fun, "again")(20)
             5.0
 
-    :param root: Root of search
-    :type root:  object
-    :param attr: Attribute name to search
-    :type attr:  str
+    Args:
+        root (:obj:`~typing.Any`): Root of search.
+        attr (:obj:`str`): Attribute name to search.
 
-    :return:     The attribute with name attr found in search
-    :rtype:      object
+    Raises:
+        AttributeError: When could not find the attribute.
 
-    :raises AttributeError: When could not find the attribute
+    Returns:
+        :obj:`~typing.Any`: The attribute with name attr found in search.
     """
 
     queue: list = []

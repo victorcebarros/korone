@@ -45,28 +45,32 @@ MODULES: list[Module] = [
 ]
 
 
-"""
-Example structure
->>> COMMANDS = {
-...     "command": {
-...         "chat": {
-...             1000: True,
-...             1001: False,
-...         },
-...         "children": [
-...             "cmd",
-...             "cm",
-...         ],
-...     },
-...     "cmd": {
-...         "parent": "command",
-...     },
-...     "cm": {
-...         "parent": "command",
-...     },
-... }
-"""
 COMMANDS: dict[str, Any] = {}
+"""
+Korone's command structure.
+
+Example:
+    .. code-block:: python
+
+        >>> COMMANDS = {
+        ...     "command": {
+        ...         "chat": {
+        ...             1000: True,
+        ...             1001: False,
+        ...         },
+        ...         "children": [
+        ...             "cmd",
+        ...             "cm",
+        ...         ],
+        ...     },
+        ...     "cmd": {
+        ...         "parent": "command",
+        ...     },
+        ...     "cm": {
+        ...         "parent": "command",
+        ...     },
+        ... }
+"""
 
 
 def toggle(command: Command):
@@ -140,7 +144,7 @@ def get_commands(module: ModuleType) -> Iterable[FunctionType]:
             the function.
 
     Returns:
-        :class:`~typing.Iterable`\[:obj:`~types.FunctionType`]: An iterable of
+        :class:`~typing.Iterable`\\[:obj:`~types.FunctionType`]: An iterable of
         functions that have a `handlers` attribute.
     """
     functions = filter(
