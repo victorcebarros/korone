@@ -12,27 +12,7 @@ from korone.modules.hello import get_language_code
 from korone.modules.core import toggle
 from korone.database.manager import Command
 from korone.locale import StringResource
-
-
-def get_command_arg(message: Message) -> str:
-    """Get the command argument from the message.
-
-    Args:
-        message (:class:`~pyrogram.types.Message`): The message to get the
-            command argument from.
-
-    Returns:
-        :obj:`str`: The command argument.
-    """
-    if message is None or message.text is None:
-        return ""
-
-    pos: int = message.text.find(" ")
-
-    if pos == -1:
-        return ""
-
-    return message.text[pos + 1 :]
+from korone.utils.misc import get_command_arg
 
 
 @Client.on_message(filters.command("disable"))

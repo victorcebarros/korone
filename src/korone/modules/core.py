@@ -20,6 +20,7 @@ from korone import constants
 from korone.database import Database
 from korone.database.manager import Clause, Column, Command, CommandManager
 from korone.utils.traverse import bfs_attr_search
+from korone.utils.misc import get_command_name
 
 log = logging.getLogger(__name__)
 
@@ -103,29 +104,6 @@ async def togglable(_, __, update: Message) -> bool:
 
 # we make the filter accessible to all other modules
 filters.togglable = filters.create(togglable)  # type: ignore
-
-
-# TODO: Move this to some korone.util module
-def get_command_name(message: Message) -> str:
-    """Gets command name.
-
-    Args:
-        message (Message): message
-
-    Returns:
-        str: stripped command name
-    """
-    if message.text is None:
-        return ""
-
-    if not message.text.startswith("/"):
-        return ""
-
-    pos: int = message.text.find(" ")
-    if pos == -1:
-        pos = len(message.text)
-
-    return message.text[1:pos]
 
 
 def toggle(command: Command) -> None:
