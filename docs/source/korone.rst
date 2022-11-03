@@ -7,7 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   korone.commands
+   korone.modules
    korone.database
    korone.locale
    korone.utils
