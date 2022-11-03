@@ -38,6 +38,8 @@ class Module:
 # global module table which gets loaded on boot
 MODULES: list[Module] = [
     Module(name="hello", author="Korone Devs"),
+    Module(name="ping", author="Korone Devs"),
+    Module(name="toggle", author="Korone Devs"),
 ]
 
 
