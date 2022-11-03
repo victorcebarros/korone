@@ -8,7 +8,7 @@ Entry point of the Korone.
 import logging
 
 from korone import config
-from korone.commands import App, AppParameters
+from korone.modules import App, AppParameters
 from korone.database import Database
 
 log = logging.getLogger(__name__)

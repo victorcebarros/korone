@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from pyrogram import Client
 
 from korone import constants
-from korone.commands import modules
+from korone.modules import modules
 
 log = logging.getLogger(__name__)
 
