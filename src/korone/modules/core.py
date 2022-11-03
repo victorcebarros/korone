@@ -1,5 +1,5 @@
 """
-Custom Pyrogram modules system that loads modules from the modules package.
+Korone's Custom Module System.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
@@ -26,25 +26,22 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class Module:
-    """Module structure."""
+    """Module Metadata."""
 
     name: str
-    """Module name"""
+    """Module Name."""
 
     author: str
-    """Module author"""
-
-    has_help: bool
-    """:obj:`True` if the module has help, otherwise :obj:`False`"""
+    """Module Author."""
 
 
+# global module table which gets loaded on boot
 MODULES: list[Module] = [
-    Module(name="hello", author="Korone Devs", has_help=False),
-    Module(name="toggle", author="Korone Devs", has_help=False),
-    Module(name="ping", author="Korone Devs", has_help=False),
+    Module(name="hello", author="Korone Devs"),
 ]
 
 
+# global command table which allows aliasing
 COMMANDS: dict[str, Any] = {}
 """
 Korone's command structure.
@@ -73,8 +70,68 @@ Example:
 """
 
 
-def toggle(command: Command):
-    """Toggles command."""
+async def togglable(_, __, update: Message) -> bool:
+    """Filter to handle state of command for Pyrogram's Handlers.
+
+    Args:
+        update (Message): update
+
+    Returns:
+        bool: True if it handles the command, False otherwise.
+    """
+
+    if update.chat is None or update.chat.id is None:
+        return False
+
+    command: str = get_command_name(update)
+
+    log.debug("command: %s", command)
+
+    if command not in COMMANDS:
+        return False
+
+    if "parent" in COMMANDS[command]:
+        command = COMMANDS[command]["parent"]
+
+    if update.chat.id not in COMMANDS[command]["chat"]:
+        return True
+
+    return COMMANDS[command]["chat"][update.chat.id]
+
+
+# we make the filter accessible to all other modules
+filters.togglable = filters.create(togglable)  # type: ignore
+
+
+# TODO: Move this to some korone.util module
+def get_command_name(message: Message) -> str:
+    """Gets command name.
+
+    Args:
+        message (Message): message
+
+    Returns:
+        str: stripped command name
+    """
+    if message.text is None:
+        return ""
+
+    if not message.text.startswith("/"):
+        return ""
+
+    pos: int = message.text.find(" ")
+    if pos == -1:
+        pos = len(message.text)
+
+    return message.text[1:pos]
+
+
+def toggle(command: Command) -> None:
+    """Enable or disable commands.
+
+    Args:
+        command (Command): command
+    """
 
     if command.command not in COMMANDS:
         raise KeyError(f"Command '{command.command}' has not been registered!")
@@ -93,161 +150,124 @@ def toggle(command: Command):
     cmdmgr.disable(command.command, command.chat_id)
 
 
-async def togglable(_, __, update: Message) -> bool:
-    """Checks whether command is enabled or not."""
-    if update.chat is None or update.chat.id is None:
-        return False
-
-    command: str = get_command_name(update)
-
-    log.info("command: %s", command)
-
-    if command not in COMMANDS:
-        return False
-
-    if "parent" in COMMANDS[command]:
-        command = COMMANDS[command]["parent"]
-
-    if update.chat.id not in COMMANDS[command]["chat"]:
-        return True
-
-    return COMMANDS[command]["chat"][update.chat.id]
-
-
-filters.togglable = filters.create(togglable)  # type: ignore
-
-
-# TODO: Move this to some korone.util module
-def get_command_name(message: Message) -> str:
-    """Get command name."""
-    if message.text is None:
-        return ""
-
-    if not message.text.startswith("/"):
-        return ""
-
-    pos: int = message.text.find(" ")
-    if pos == -1:
-        pos = len(message.text)
-
-    return message.text[1:pos]
-
-
-def get_commands(module: ModuleType) -> Iterable[FunctionType]:
-    """The get_commands function takes a module and returns an iterable
-    of functions that have been decorated with the @handler decorator.
-    This function is used to determine which commands are available
-    for use by the client.
+def register_command(app: Client, command: FunctionType) -> bool:
+    """Registers command handlers to Pyrogram.
 
     Args:
-        module (:obj:`~types.ModuleType`): Get the module that contains
-            the function.
+        app (Client): Pyrogram's Client
+        command (FunctionType): Function with Pyrogram's Handler
 
     Returns:
-        :class:`~typing.Iterable`\\[:obj:`~types.FunctionType`]: An iterable of
-        functions that have a `handlers` attribute.
+        bool: True if successful, False otherwise.
     """
-    functions = filter(
-        inspect.isfunction, map(lambda var: getattr(module, var), vars(module))
-    )
-    return filter(lambda fun: hasattr(fun, "handlers"), functions)
+    if app is None:
+        return False
+
+    successful: bool = False
+
+    for handler, group in command.handlers:  # type: ignore
+        if isinstance(handler, Handler) and isinstance(group, int):
+            log.info("Registering command %s", command)
+            log.info("\thandler: %s", handler)
+            log.info("\tgroup:   %d", group)
+
+            successful = True
+
+            app.add_handler(handler, group)
+
+            log.debug("Checking for command filters.")
+            if handler.filters is None:
+                continue
+
+            log.debug("Getting command aliases.")
+            try:
+                alias: list[str]
+                alias = list(bfs_attr_search(handler.filters, "commands"))
+            except AttributeError:
+                continue
+
+            log.info('Found "%s" command(s)!', alias)
+
+            parent: str = alias[0]
+            children: list[str] = alias[1:]
+
+            COMMANDS[parent] = {
+                "chat": {},
+                "children": children,
+            }
+
+            for cmd in children:
+                COMMANDS[cmd] = {
+                    "parent": parent,
+                }
+
+            cmdmgr = CommandManager(Database())
+
+            for each in cmdmgr.query(Clause(Column.COMMAND, parent)):
+                log.debug(
+                    "Fetched chat state from the database: %s => %s",
+                    each.chat_id,
+                    str(each.state),
+                )
+                COMMANDS[parent]["chat"][each.chat_id] = each.state
+
+            log.debug("New command node: %s", COMMANDS[parent])
+
+    return successful
 
 
-def load(app: Client) -> None:
-    """The load function is responsible for loading
-    all of the modules in the modules package.
+def load_module(app: Client, module: Module) -> None:
+    """Loads all handlers within module.
 
     Args:
-        app (:class:`~pyrogram.Client`): Call the load function.
-
-    Raises:
-        TypeError: If app is not initalized.
+        app (Client): Pyrogram Client
+        module (Module): Korone Module
     """
+
     if app is None:
         log.critical("Pyrogram's Client app has not been initialized!")
         log.critical("User attempted to load commands before init.")
 
         raise TypeError("app has not been initialized!")
 
-    for module in MODULES:
-        try:
-            log.info("Loading module %s", module.name)
-            component = import_module(
-                f".{module.name}",
-                constants.MODULES_PACKAGE_NAME,
+    try:
+        log.info("Loading module %s", module.name)
+
+        name: str = module.name
+        pkg: str = constants.MODULES_PACKAGE_NAME
+
+        component: ModuleType = import_module(f".{name}", pkg)
+
+    except ModuleNotFoundError as err:
+        log.error("Could not load module %s: %s", module.name, err)
+        raise
+
+    commands: Iterable[FunctionType] = filter(
+        lambda fun: hasattr(fun, "handlers"),
+        filter(
+            inspect.isfunction,
+            map(
+                lambda var: getattr(component, var),
+                vars(component)
             )
-        except ModuleNotFoundError as err:
-            log.error("Could not load module %s: %s", module.name, err)
+        )
+    )
+
+    for command in commands:
+        log.info("Adding command %s from module", command)
+        if not register_command(app, command):
+            log.info("Could not add command %s", command)
             continue
 
-        commands: Iterable[FunctionType] = get_commands(component)
+        log.info("Successfully added command %s", command)
 
-        def register(command: FunctionType) -> bool:
-            """
-            Registers command handlers to Pyrogram.
 
-            The argument is a function containing at least one handler.
+def load_all(app: Client) -> None:
+    """Loads all modules declared within core modules.
 
-            Args:
-                command (:class:`~types.FunctionType`): Function containing handler
+    Args:
+        app (Client): Pyrogram's Client
+    """
 
-            Returns:
-                bool: :obj:`True` if successful, :obj:`False` otherwise.
-            """
-            successful: bool = False
-            for handler, group in command.handlers:  # type: ignore
-                if isinstance(handler, Handler) and isinstance(group, int):
-                    log.info("Loading command %s", command)
-                    log.info("\thandler: %s", handler)
-                    log.info("\tgroup:   %d", group)
-                    app.add_handler(handler, group)
-
-                    successful = True
-
-                    log.debug("Detecting if handler has filters...")
-                    if handler.filters is None:
-                        continue
-
-                    log.debug("Checking for commands filter...")
-                    try:
-                        alias: list[str] = list(
-                            bfs_attr_search(handler.filters, "commands")
-                        )
-                    except AttributeError:
-                        continue
-
-                    log.info('Found "%s" command(s)!', alias)
-                    parent: str = alias[0]
-                    children: list[str] = alias[1:]
-
-                    COMMANDS[parent] = {
-                        "chat": {},
-                        "children": children,
-                    }
-
-                    for cmd in children:
-                        COMMANDS[cmd] = {
-                            "parent": parent,
-                        }
-
-                    cmdmgr = CommandManager(Database())
-
-                    for each in cmdmgr.query(Clause(Column.COMMAND, parent)):
-                        log.debug(
-                            "Fetched chat state from the database: %s => %s",
-                            each.chat_id,
-                            str(each.state),
-                        )
-                        COMMANDS[parent]["chat"][each.chat_id] = each.state
-
-                    log.debug("New command node: %s", COMMANDS[parent])
-
-            return successful
-
-        for command in commands:
-            log.info("Adding command %s from module", command)
-            if not register(command):
-                log.info("Could not add command %s", command)
-                continue
-
-            log.info("Successfully added command %s", command)
+    for module in MODULES:
+        load_module(app, module)
