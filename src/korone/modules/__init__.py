@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from pyrogram import Client
 
 from korone import constants
-from korone.modules import modules
+from korone.modules import core
 
 log = logging.getLogger(__name__)
 
@@ -68,7 +68,7 @@ class App:
         )
 
         log.debug("Loading modules")
-        modules.load(self.app)
+        core.load_all(self.app)
 
     def run(self) -> None:
         """The run function is the main entry point for the client.

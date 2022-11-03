@@ -81,5 +81,5 @@ PRAGMA journal_mode="WAL";
 """
 """The database setup to be used."""
 
-MODULES_PACKAGE_NAME: str = "korone.commands"
+MODULES_PACKAGE_NAME: str = "korone.modules"
 """The package that contains all the commands modules."""
