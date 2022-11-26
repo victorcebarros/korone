@@ -11,11 +11,20 @@ from pyrogram.types import Message
 def get_command_name(message: Message) -> str:
     """Gets command name.
 
+    Example:
+        .. code-block:: python
+
+            >>>     # id=0 is required to create the message type
+            >>> m = Message(text="/command arg1 arg2 ... argN", id=0)
+            >>> c = get_command_name(m)
+            >>> c
+            "command"
+
     Args:
-        message (Message): message
+        message (:obj:`~pyrogram.types.Message`): Pyrogram Message.
 
     Returns:
-        str: stripped command name
+        str: Stripped command name
     """
     if message.text is None:
         return ""
@@ -30,17 +39,43 @@ def get_command_name(message: Message) -> str:
     return message.text[1:pos]
 
 
-def get_language_code(message: Message) -> str:
-    """The get_language_code function takes a message object as an argument and
-    returns the language code of the user who sent that message.
-    If no language code is found, it defaults to "en" (English).
+def get_command_arg(message: Message) -> str:
+    """Get the command argument from message.
+
+    Example:
+        .. code-block:: python
+
+            >>>     # id=0 is required to create the message type
+            >>> m = Message(text="/command arg1 arg2 ... argN", id=0)
+            >>> c = get_command_name(m)
+            >>> c
+            "arg1 arg2 ... argN"
 
     Args:
-        message (:obj:`~pyrogram.types.Message`): Get the message that was
-            sent by the user.
+        message (:class:`~pyrogram.types.Message`): Pyrogram's Message.
 
     Returns:
-        str: The language code of the user that sends a message.
+        :obj:`str`: Arguments passed to the command.
+    """
+    if message is None or message.text is None:
+        return ""
+
+    pos: int = message.text.find(" ")
+
+    if pos == -1:
+        return ""
+
+    return message.text[pos + 1:]
+
+
+def get_language_code(message: Message) -> str:
+    """Returns appropriate language code. Default return value is 'en'.
+
+    Args:
+        message (:obj:`~pyrogram.types.Message`): Pyrogram Message.
+
+    Returns:
+        str: Sender's Language Code.
     """
     language_code: str = "en"
     if message.from_user is None:
@@ -52,24 +87,3 @@ def get_language_code(message: Message) -> str:
     language_code = message.from_user.language_code
 
     return language_code
-
-
-def get_command_arg(message: Message) -> str:
-    """Get the command argument from the message.
-
-    Args:
-        message (:class:`~pyrogram.types.Message`): The message to get the
-            command argument from.
-
-    Returns:
-        :obj:`str`: The command argument.
-    """
-    if message is None or message.text is None:
-        return ""
-
-    pos: int = message.text.find(" ")
-
-    if pos == -1:
-        return ""
-
-    return message.text[pos + 1:]
