@@ -12,6 +12,14 @@ korone.utils.traverse module
    :undoc-members:
    :show-inheritance:
 
+korone.utils.misc module
+----------------------------
+
+.. automodule:: korone.utils.misc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
