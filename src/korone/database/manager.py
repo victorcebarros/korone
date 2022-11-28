@@ -30,3 +30,25 @@ BoundData = tuple[Any, ...]
 # For example:
 # >>> result: Result = ("user == ?", ("Oliver",))
 Result = tuple[Clause, BoundData]
+
+
+class Query:
+    """Queries allows you to specify what element or
+    elements to fetch from the database.
+
+    Example:
+        .. code-block:: python
+
+            >>> # hypothetical, not yet implemented, connection class
+            >>> conn = Connection()
+            >>> table = conn.logicians()
+            >>> logician = Query()
+            >>> table.query(logician.name == "Kazimierz Kuratowski")
+            [{'desc': 'Polish mathematician and logician. [...]',
+              'name': 'Kazimierz Kuratowski'}]
+    """
+
+    def __init__(self, *, lhs=None, operator=None, rhs=None):
+        self.lhs = lhs
+        self.operator = operator
+        self.rhs = rhs
