@@ -75,6 +75,24 @@ class Query:
     def __invert__(self):
         return self._new_node(operator="NOT", rhs=self)
 
+    def __eq__(self, other):
+        return self._new_node(lhs=self.lhs, operator="==", rhs=other)
+
+    def __ne__(self, other):
+        return self._new_node(lhs=self.lhs, operator="!=", rhs=other)
+
+    def __lt__(self, other):
+        return self._new_node(lhs=self.lhs, operator="<", rhs=other)
+
+    def __le__(self, other):
+        return self._new_node(lhs=self.lhs, operator="<=", rhs=other)
+
+    def __gt__(self, other):
+        return self._new_node(lhs=self.lhs, operator=">", rhs=other)
+
+    def __ge__(self, other):
+        return self._new_node(lhs=self.lhs, operator=">=", rhs=other)
+
     def _new_node(self, *, lhs=None, operator=None, rhs=None) -> 'Query':
         query = Query(
             lhs=copy(lhs),
