@@ -7,6 +7,7 @@ Database queries.
 
 import logging
 
+from copy import copy
 from typing import Any
 
 log = logging.getLogger(__name__)
@@ -52,3 +53,22 @@ class Query:
         self.lhs = lhs
         self.operator = operator
         self.rhs = rhs
+
+    def __copy__(self):
+        return Query(lhs=self.lhs, operator=self.operator, rhs=self.rhs)
+
+    def _new_node(self, *, lhs=None, operator=None, rhs=None) -> 'Query':
+        query = Query(
+            lhs=copy(lhs),
+            operator=copy(operator),
+            rhs=copy(rhs),
+        )
+
+        # consider this case, what should user by itself return?
+        # >>> user = Query()
+        # >>> (user.name == "Hyper Mega Chad Polyglot") & user
+        # to keep a defined state, we clear previously defined keys
+        self.lhs = None
+        self.rhs = None
+
+        return query
