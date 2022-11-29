@@ -66,6 +66,15 @@ class Query:
     def __copy__(self):
         return Query(lhs=self.lhs, operator=self.operator, rhs=self.rhs)
 
+    def __and__(self, other):
+        return self._new_node(lhs=self, operator="AND", rhs=other)
+
+    def __or__(self, other):
+        return self._new_node(lhs=self, operator="OR", rhs=other)
+
+    def __invert__(self):
+        return self._new_node(operator="NOT", rhs=self)
+
     def _new_node(self, *, lhs=None, operator=None, rhs=None) -> 'Query':
         query = Query(
             lhs=copy(lhs),
