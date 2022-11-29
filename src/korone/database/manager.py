@@ -54,6 +54,15 @@ class Query:
         self.operator = operator
         self.rhs = rhs
 
+    def __getattr__(self, name: str):
+        # Allows for instance.name
+        self.lhs = name
+        return self
+
+    def __getitem__(self, item: str):
+        # Allows for instance['name']
+        return self.__getattr__(item)
+
     def __copy__(self):
         return Query(lhs=self.lhs, operator=self.operator, rhs=self.rhs)
 
