@@ -29,8 +29,12 @@ BoundData = tuple[Any, ...]
 # is used internally to execute the appropriate SQL
 # statement.
 # For example:
-# >>> result: Result = ("user == ?", ("Oliver",))
-Result = tuple[Clause, BoundData]
+# >>> result: CompiledQuery = ("user == ?", ("Oliver",))
+CompiledQuery = tuple[Clause, BoundData]
+
+
+class MalformedQuery(Exception):
+    """Malformed Query."""
 
 
 class Query:
@@ -108,3 +112,44 @@ class Query:
         self.rhs = None
 
         return query
+
+    def compile(self) -> CompiledQuery:
+        """Compiles Query to SQL Clause and its Bound Data..
+
+        Returns:
+            CompiledQuery: A SQL Clause with Bound Data.
+        """
+
+        def isvalidoperator(obj: Any) -> bool:
+            return isinstance(obj, str) and not len(obj) == 0
+
+        def visit(obj: Any) -> CompiledQuery:
+            if not isinstance(obj, Query):
+                raise MalformedQuery("Cannot visit a non-query node.")
+
+            if not isvalidoperator(obj.operator):
+                raise MalformedQuery("Invalid operator.")
+
+            islhsquery = isinstance(obj.lhs, Query)
+            isrhsquery = isinstance(obj.rhs, Query)
+
+            if not islhsquery and not isrhsquery:
+                if not isinstance(obj.lhs, str):
+                    raise MalformedQuery("Key must be a string.")
+                return f"({obj.lhs} {obj.operator} ?)", (obj.rhs,)
+
+            if islhsquery ^ isrhsquery:
+                member: str = "Key"
+
+                if isrhsquery:
+                    member = "Value"
+
+                raise MalformedQuery(f"{member} cannot be a query type.")
+
+            # *ph means PlaceHolder
+            lhsstr, lhsph = visit(obj.lhs)
+            rhsstr, rhsph = visit(obj.rhs)
+
+            return f"({lhsstr} {obj.operator} {rhsstr})", (*lhsph, *rhsph)
+
+        return visit(self)
