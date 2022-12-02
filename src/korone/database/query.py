@@ -5,12 +5,8 @@ Database queries.
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
 
-import logging
-
 from copy import copy
 from typing import Any
-
-log = logging.getLogger(__name__)
 
 
 # Represents a string containing placeholders for the
