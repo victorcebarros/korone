@@ -17,3 +17,5 @@ korone.conf
 venv/
 
 .vscode
+
+src/korone/locale/*/LC_MESSAGES/*.mo

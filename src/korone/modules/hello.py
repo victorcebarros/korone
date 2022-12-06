@@ -26,7 +26,7 @@ async def command_greet(_: Client, message: Message) -> None:
     language_code: str = get_language_code(message)
 
     await message.reply(
-        StringResource.get(language_code, "strings/greet/message"),
+        StringResource.ugettext(language_code, "Hello there!"),
     )
 
 
@@ -35,5 +35,5 @@ async def command_farewell(_: Client, message: Message) -> None:
     language_code: str = get_language_code(message)
 
     await message.reply(
-        StringResource.get(language_code, "strings/farewell/message"),
+        StringResource.ugettext(language_code, "Farewell!"),
     )
