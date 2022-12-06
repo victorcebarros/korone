@@ -8,10 +8,10 @@ The toggle module enables and disables commands on a per chat basis.
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
-from korone.modules.hello import get_language_code
-from korone.modules.core import toggle
 from korone.database.manager import Command
 from korone.locale import StringResource
+from korone.modules.core import toggle
+from korone.modules.hello import get_language_code
 from korone.utils.misc import get_command_arg
 
 
@@ -29,9 +29,7 @@ async def command_disable(_, message: Message) -> None:
 
     if command == "":
         await message.reply(
-            StringResource.get(
-                language_code, "strings/enable/message/failure/emptycommand"
-            )
+            StringResource.ugettext(language_code, "Failed to disable the command!")
         )
         return
 
@@ -39,14 +37,14 @@ async def command_disable(_, message: Message) -> None:
         toggle(Command(command=command, chat_id=message.chat.id, state=False))
     except KeyError:
         await message.reply(
-            StringResource.get(
-                language_code, "strings/disable/message/failure/invalidcommand"
+            StringResource.ugettext(
+                language_code, "There is no command named '{}'!"
             ).format(command)
         )
         return
 
     await message.reply(
-        StringResource.get(language_code, "strings/disable/message/success")
+        StringResource.ugettext(language_code, "Successfully disabled the command!")
     )
 
 
@@ -64,9 +62,7 @@ async def command_enable(_, message: Message) -> None:
 
     if command == "":
         await message.reply(
-            StringResource.get(
-                language_code, "strings/enable/message/failure/emptycommand"
-            )
+            StringResource.ugettext(language_code, "Failed to enable the command!")
         )
         return
 
@@ -74,12 +70,12 @@ async def command_enable(_, message: Message) -> None:
         toggle(Command(command=command, chat_id=message.chat.id, state=True))
     except KeyError:
         await message.reply(
-            StringResource.get(
-                language_code, "strings/enable/message/failure/invalidcommand"
+            StringResource.ugettext(
+                language_code, "There is no command named '{}'!"
             ).format(command)
         )
         return
 
     await message.reply(
-        StringResource.get(language_code, "strings/enable/message/success")
+        StringResource.ugettext(language_code, "Successfully enabled the command!")
     )
