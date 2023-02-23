@@ -1,0 +1,38 @@
+name: Python Package
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install build mypy black isort
+          mypy --install-types --non-interactive
+          pip install .[test]
+      - name: Lint
+        run: |
+          mypy .
+          isort --check --profile black .
+      - name: Test
+        run: |
+          pytest tests/
+      - name: Build
+        run: |
+          python -m build
+      - name: Upload build
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
