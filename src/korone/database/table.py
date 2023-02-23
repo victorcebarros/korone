@@ -10,21 +10,22 @@ from typing import Any, NewType, Protocol
 from korone.database.query import Query
 
 
-Document = NewType("Document", dict[str, Any])
-"""
-Document represents a single row on the SQL Database
-Table.
+class Document(dict[str, Any]):
+    """
+    Document represents a single row on the SQL Database
+    Table.
 
-One should note that, due to the limitation of Table
-Rows, one cannot use a Collection or Mapping as a
-Document Value.
+    One should note that, due to the limitation of Table
+    Rows, one cannot use a Collection or Mapping as a
+    Document Value.
 
-For example:
+    For example:
 
-.. code-block:: python
+    .. code-block:: python
 
-    >>> invaliddoc: Document = {"key": [1, 2, 3, 4, 5, 6]}
-"""
+        >>> invaliddoc: Document = {"key": [1, 2, 3, 4, 5, 6]}
+    """
+
 
 Documents = NewType("Documents", list[Document])
 """

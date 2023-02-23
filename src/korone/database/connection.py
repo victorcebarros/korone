@@ -44,6 +44,9 @@ class Connection(Protocol):
     def connect(self):
         """Opens a connection to a database."""
 
+    def execute(self, sql: str, parameters: tuple = (), /):
+        """Execute SQL operations."""
+
     def table(self, name: str) -> Table:
         """Returns a Table, which can be used for
         database related operations.
