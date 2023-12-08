@@ -3,13 +3,13 @@ Entry point of the Korone.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import logging
 
 from korone import config
-from korone.modules import App, AppParameters
 from korone.database import Database
+from korone.modules import App, AppParameters
 
 log = logging.getLogger(__name__)
 

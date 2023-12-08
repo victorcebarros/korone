@@ -3,12 +3,12 @@ Module to help managing trees.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
-from typing import Any, Union
+from typing import Any
 
 
-def traverse(tree: Union[dict, list], path: str, separator: str = "/") -> Any:
+def traverse(tree: dict | list, path: str, separator: str = "/") -> Any:
     """The traverse function takes a tree and a path, and returns the value at
     that path. The tree can be either a list or dictionary, but the path must
     be valid for that type of tree.
@@ -121,9 +121,8 @@ def bfs_attr_search(root: Any, attr: str) -> Any:
             return getattr(obj, attr)
 
         try:
-            objs = map(
-                lambda attr: getattr(obj, attr),
-                filter(lambda s: not s.startswith("_"), vars(obj)),
+            objs = (
+                getattr(obj, attr) for attr in filter(lambda s: not s.startswith("_"), vars(obj))
             )
         except TypeError:
             continue

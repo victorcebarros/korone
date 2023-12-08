@@ -3,14 +3,15 @@ Korone's Custom Module System.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import inspect
 import logging
+from collections.abc import Iterable
 from dataclasses import dataclass
 from importlib import import_module
 from types import FunctionType, ModuleType
-from typing import Any, Iterable
+from typing import Any
 
 from pyrogram import Client, filters
 from pyrogram.handlers.handler import Handler
@@ -19,8 +20,8 @@ from pyrogram.types import Message
 from korone import constants
 from korone.database import Database
 from korone.database.manager import Clause, Column, Command, CommandManager
-from korone.utils.traverse import bfs_attr_search
 from korone.utils.misc import get_command_name
+from korone.utils.traverse import bfs_attr_search
 
 log = logging.getLogger(__name__)
 
@@ -224,13 +225,7 @@ def load_module(app: Client, module: Module) -> None:
 
     commands: Iterable[FunctionType] = filter(
         lambda fun: hasattr(fun, "handlers"),
-        filter(
-            inspect.isfunction,
-            map(
-                lambda var: getattr(component, var),
-                vars(component)
-            )
-        )
+        filter(inspect.isfunction, (getattr(component, var) for var in vars(component))),
     )
 
     for command in commands:

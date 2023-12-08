@@ -3,17 +3,18 @@ SQLite3 implementation of the Connection and Table.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import sqlite3
 from typing import Any, Protocol
 
-from korone.database.table import Document, Documents, Table
 from korone.database.query import Query
+from korone.database.table import Document, Documents, Table
 
 
 class _Conn(Protocol):
     """Class with SQLite3-specific bits and pieces."""
+
     _path: str
     _args: tuple
     _kwargs: dict
@@ -29,6 +30,7 @@ class _Conn(Protocol):
 
 class SQLite3Table:
     """Represents the specifics of a SQLitie3 Table."""
+
     _conn: _Conn
     _table: str
 
@@ -104,11 +106,7 @@ class SQLite3Connection:
         if self._is_open():
             raise RuntimeError("Connection is already in place.")
 
-        self._conn = sqlite3.connect(
-            self._path,
-            *self._args,
-            **self._kwargs
-        )
+        self._conn = sqlite3.connect(self._path, *self._args, **self._kwargs)
 
     def table(self, name: str) -> Table:
         """Return a Table which can be operated upon."""

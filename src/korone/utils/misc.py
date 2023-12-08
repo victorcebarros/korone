@@ -3,7 +3,7 @@ Module to help managing trees.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 from pyrogram.types import Message
 
@@ -65,7 +65,7 @@ def get_command_arg(message: Message) -> str:
     if pos == -1:
         return ""
 
-    return message.text[pos + 1:]
+    return message.text[pos + 1 :]
 
 
 def get_language_code(message: Message) -> str:
@@ -84,6 +84,4 @@ def get_language_code(message: Message) -> str:
     if message.from_user.language_code is None:
         return language_code
 
-    language_code = message.from_user.language_code
-
-    return language_code
+    return message.from_user.language_code

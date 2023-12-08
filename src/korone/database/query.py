@@ -3,11 +3,10 @@ Database queries.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 from copy import copy
 from typing import Any
-
 
 # Represents a string containing placeholders for the
 # data which will be bound on the SQL Statement.
@@ -29,7 +28,7 @@ BoundData = tuple[Any, ...]
 CompiledQuery = tuple[Clause, BoundData]
 
 
-class MalformedQuery(Exception):
+class MalformedQueryError(Exception):
     """Malformed Query."""
 
 
@@ -93,7 +92,7 @@ class Query:
     def __ge__(self, other):
         return self._new_node(lhs=self.lhs, operator=">=", rhs=other)
 
-    def _new_node(self, *, lhs=None, operator=None, rhs=None) -> 'Query':
+    def _new_node(self, *, lhs=None, operator=None, rhs=None) -> "Query":
         query = Query(
             lhs=copy(lhs),
             operator=copy(operator),
@@ -117,21 +116,21 @@ class Query:
         """
 
         def isvalidoperator(obj: Any) -> bool:
-            return isinstance(obj, str) and not len(obj) == 0
+            return isinstance(obj, str) and len(obj) != 0
 
         def visit(obj: Any) -> CompiledQuery:
             if not isinstance(obj, Query):
-                raise MalformedQuery("Cannot visit a non-query node.")
+                raise MalformedQueryError("Cannot visit a non-query node.")
 
             if not isvalidoperator(obj.operator):
-                raise MalformedQuery("Invalid operator.")
+                raise MalformedQueryError("Invalid operator.")
 
             islhsquery = isinstance(obj.lhs, Query)
             isrhsquery = isinstance(obj.rhs, Query)
 
             if not islhsquery and not isrhsquery:
                 if not isinstance(obj.lhs, str):
-                    raise MalformedQuery("Key must be a string.")
+                    raise MalformedQueryError("Key must be a string.")
                 return f"({obj.lhs} {obj.operator} ?)", (obj.rhs,)
 
             if islhsquery ^ isrhsquery:
@@ -140,7 +139,7 @@ class Query:
                 if isrhsquery:
                     member = "Value"
 
-                raise MalformedQuery(f"{member} cannot be a query type.")
+                raise MalformedQueryError(f"{member} cannot be a query type.")
 
             # *ph means PlaceHolder
             lhsstr, lhsph = visit(obj.lhs)

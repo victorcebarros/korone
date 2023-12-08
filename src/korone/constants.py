@@ -8,9 +8,10 @@ All Korone's constants that are used throughout the codebase.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import os
+from pathlib import Path
 
 LOGGER_FORMAT_OUTPUT: str = (
     "%(name)s"
@@ -35,10 +36,10 @@ The XDG_DATA_HOME environment variable.
 Where user-specific data files should be written (analogous to /usr/share).
 """
 
-DEFAULT_CONFIG_PATH: str = f"{XDG_CONFIG_HOME}/korone/korone.conf"
+DEFAULT_CONFIG_PATH: Path = Path(f"{XDG_CONFIG_HOME}/korone/korone.conf")
 """The default path to the config file."""
 
-DEFAULT_DBFILE_PATH: str = f"{XDG_DATA_HOME}/korone/korone.db"
+DEFAULT_DBFILE_PATH: Path = Path(f"{XDG_DATA_HOME}/korone/korone.db")
 """The default path to the database file."""
 
 DEFAULT_WORKERS: int = 24
