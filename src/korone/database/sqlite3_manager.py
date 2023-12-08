@@ -30,9 +30,10 @@ T = TypeVar("T")
 class Manager(Generic[T]):
     """Base class for all database managers."""
 
-    def __init__(self, connection: Connection, table: Table):
+    def __init__(self, connection: Connection, table: str):
         self.conn: Connection = connection
-        self.table: Table = table
+        self._table: str = table
+        self.table = self.conn.table(self._table)
 
     def insert(self, item: T) -> None:
         self.table.insert(item)
@@ -58,9 +59,10 @@ class Command:
 
 class CommandManager(Manager[Command]):
     def __init__(self, connection: Connection):
-        table = connection.table("DisabledCommands")
+        self._table: str = "DisabledCommands"
+        self.table: Table = connection.table(self._table)
 
-        super().__init__(connection, table)
+        super().__init__(connection, self._table)
 
         self.columns: dict[Column, str] = {
             Column.UUID: "chat_uuid",
