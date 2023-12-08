@@ -20,6 +20,9 @@ class Column(Enum):
     COMMAND = auto()
     STATE = auto()
 
+    def __str__(self) -> str:
+        return self.name.lower()
+
 
 T = TypeVar("T")
 

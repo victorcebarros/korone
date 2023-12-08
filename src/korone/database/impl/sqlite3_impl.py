@@ -6,8 +6,10 @@ SQLite3 implementation of the Connection and Table.
 # Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import sqlite3
+from pathlib import Path
 from typing import Any, Protocol
 
+from korone.constants import DEFAULT_DBFILE_PATH
 from korone.database.query import Query
 from korone.database.table import Document, Documents, Table
 
@@ -15,7 +17,7 @@ from korone.database.table import Document, Documents, Table
 class _Conn(Protocol):
     """Class with SQLite3-specific bits and pieces."""
 
-    _path: str
+    _path: Path
     _args: tuple
     _kwargs: dict
     _conn: sqlite3.Connection | None = None
@@ -123,13 +125,13 @@ class SQLite3Table:
 class SQLite3Connection:
     """SQLite3 Database Connection."""
 
-    _path: str
+    _path: Path
     _args: tuple
     _kwargs: dict
     _conn: sqlite3.Connection | None = None
 
-    def __init__(self, *args, path: str = ":memory", **kwargs):
-        self._path: str = path
+    def __init__(self, *args, path: Path = DEFAULT_DBFILE_PATH, **kwargs):
+        self._path: Path = path
         self._args = args
         self._kwargs = kwargs
 

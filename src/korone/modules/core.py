@@ -18,8 +18,9 @@ from pyrogram.handlers.handler import Handler
 from pyrogram.types import Message
 
 from korone import constants
-from korone.database import Database
-from korone.database.manager import Clause, Column, Command, CommandManager
+from korone.database.impl.sqlite3_impl import SQLite3Connection
+from korone.database.query import Query
+from korone.database.sqlite3_manager import Column, Command, CommandManager
 from korone.utils.misc import get_command_name
 from korone.utils.traverse import bfs_attr_search
 
@@ -122,7 +123,7 @@ def toggle(command: Command) -> None:
 
     COMMANDS[command.command]["chat"][command.chat_id] = command.state
 
-    cmdmgr = CommandManager(Database())
+    cmdmgr = CommandManager(SQLite3Connection(constants.DEFAULT_DBFILE_PATH))
 
     if command.state:
         cmdmgr.enable(command.command, command.chat_id)
@@ -182,9 +183,10 @@ def register_command(app: Client, command: FunctionType) -> bool:
                     "parent": parent,
                 }
 
-            cmdmgr = CommandManager(Database())
+            cmdmgr = CommandManager(SQLite3Connection(constants.DEFAULT_DBFILE_PATH))
 
-            for each in cmdmgr.query(Clause(Column.COMMAND, parent)):
+            query = Query()
+            for each in cmdmgr.query(query[str(Column.COMMAND.__str__)] == parent):
                 log.debug(
                     "Fetched chat state from the database: %s => %s",
                     each.chat_id,
