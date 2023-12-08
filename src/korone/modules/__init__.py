@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from pyrogram import Client
 
 from korone import constants
+from korone.database.connection import Connection
 from korone.modules import core
 
 log = logging.getLogger(__name__)
@@ -36,6 +37,9 @@ class AppParameters:
 
     ipv6: bool = False
     """:obj:`True` if the client should use IPv6, otherwise :obj:`False`."""
+
+    connection: Connection | None = None
+    """Database connection."""
 
     name: str = constants.DEFAULT_NAME
     """Name of the client."""
@@ -66,6 +70,8 @@ class App:
             name=self.parameters.name,
             workers=self.parameters.workers,
         )
+
+        self.conn = self.parameters.connection
 
         log.debug("Loading modules")
         core.load_all(self.app)

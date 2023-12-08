@@ -30,7 +30,7 @@ The XDG_CONFIG_HOME environment variable.
 Where user-specific configurations should be written (analogous to /etc).
 """
 
-XDG_DATA_HOME: str = os.environ.get("XDG_DATA_HOME", "~/.local/share")
+XDG_DATA_HOME: Path = Path("~/.local/share").expanduser()
 """
 The XDG_DATA_HOME environment variable.
 Where user-specific data files should be written (analogous to /usr/share).

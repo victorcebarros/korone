@@ -7,7 +7,7 @@ from enum import Enum, auto
 from sqlite3 import Row
 from typing import Any, Generic, TypeVar
 
-from korone.database.impl.sqlite3_impl import SQLite3Connection
+from korone.database.connection import Connection
 from korone.database.query import Query
 from korone.database.table import Document, Table
 
@@ -30,8 +30,8 @@ T = TypeVar("T")
 class Manager(Generic[T]):
     """Base class for all database managers."""
 
-    def __init__(self, connection: SQLite3Connection, table: Table):
-        self.conn: SQLite3Connection = connection
+    def __init__(self, connection: Connection, table: Table):
+        self.conn: Connection = connection
         self.table: Table = table
 
     def insert(self, item: T) -> None:
@@ -40,7 +40,7 @@ class Manager(Generic[T]):
     def cast(self, row: Row) -> T: ...
 
     def query(self, query: Query | None = None) -> Iterable[T]:
-        return map(self.cast, self.conn.table.query(query))
+        return map(self.cast, self.table.query(query))
 
     def update(self, fields: Any | Document, query: Query) -> None:
         self.table.update(fields, query)
@@ -57,7 +57,7 @@ class Command:
 
 
 class CommandManager(Manager[Command]):
-    def __init__(self, connection: SQLite3Connection):
+    def __init__(self, connection: Connection):
         table = connection.table("DisabledCommands")
 
         super().__init__(connection, table)

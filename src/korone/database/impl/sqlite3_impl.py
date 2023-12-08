@@ -45,80 +45,56 @@ class SQLite3Table:
 
     def insert(self, fields: Any | Document):
         """Insert a row on the table."""
-        # Check the type of fields
         if isinstance(fields, Document):
-            # Convert the document to a tuple of values
             values = tuple(fields.values())
         elif isinstance(fields, tuple | list):
-            # Use the fields as values
             values = fields
         else:
-            # Raise an exception for invalid type
             raise TypeError("Fields must be a Document, tuple, or list")
 
-        # Create a placeholder string for the values
         placeholders = ", ".join(["?"] * len(values))
 
-        # Create the SQL statement
         sql = f"INSERT INTO {self._table} VALUES ({placeholders})"
 
-        # Execute the statement with the values
         self._conn._execute(sql, tuple(values))
 
     def query(self, query: Query) -> Documents:
         """Query rows that match the criteria."""
-        # Compile the query to SQL clause and bound data
         clause, data = query.compile()
 
-        # Create the SQL statement
         sql = f"SELECT * FROM {self._table} WHERE {clause}"
 
-        # Execute the statement and fetch the results
         rows = self._conn._execute(sql, data).fetchall()
 
-        # Convert the rows to documents
         return [Document(row) for row in rows]
 
     def update(self, fields: Any | Document, query: Query):
         """Update fields on rows that match the criteria."""
-        # Check the type of fields
         if isinstance(fields, Document):
-            # Convert the document to a list of key-value pairs
             pairs = list(fields.items())
         elif isinstance(fields, tuple | list):
-            # Use the fields as pairs
             pairs = fields
         else:
-            # Raise an exception for invalid type
             raise TypeError("Fields must be a Document, tuple, or list")
 
-        # Create a list of assignments for the SQL statement
         assignments = [f"{key} = ?" for key, value in pairs]
 
-        # Create a string of assignments separated by commas
         assignments = ", ".join(assignments)
 
-        # Create a list of values for the SQL statement
         values = [value for key, value in pairs]
 
-        # Compile the query to SQL clause and bound data
         clause, data = query.compile()
 
-        # Create the SQL statement
         sql = f"UPDATE {self._table} SET {assignments} WHERE {clause}"
 
-        # Execute the statement with the values and data
         self._conn._execute(sql, (*values, *data))
 
     def delete(self, query: Query):
         """Delete rows that match the criteria."""
-        # Compile the query to SQL clause and bound data
         clause, data = query.compile()
 
-        # Create the SQL statement
         sql = f"DELETE FROM {self._table} WHERE {clause}"
 
-        # Execute the statement with the data
         self._conn._execute(sql, data)
 
 

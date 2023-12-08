@@ -6,9 +6,10 @@ Entry point of the Korone.
 # Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import logging
+from pathlib import Path
 
 from korone import config
-from korone.database import Database
+from korone.database.impl.sqlite3_impl import SQLite3Connection
 from korone.modules import App, AppParameters
 
 log = logging.getLogger(__name__)
@@ -27,24 +28,21 @@ def main(argv: list[str]) -> int:
     """
     log.info("Program started")
 
-    config.init("korone.conf")
+    config.init(Path("korone.conf"))
 
     ipv6 = config.get("pyrogram", "USE_IPV6").lower() in ("yes", "true", "1")
 
-    Database.connect("korone.db")
-    Database.setup()
+    with SQLite3Connection() as conn:
+        param: AppParameters = AppParameters(
+            api_id=config.get("pyrogram", "API_ID"),
+            api_hash=config.get("pyrogram", "API_HASH"),
+            bot_token=config.get("pyrogram", "BOT_TOKEN"),
+            ipv6=ipv6,
+            connection=conn,
+        )
 
-    param: AppParameters = AppParameters(
-        api_id=config.get("pyrogram", "API_ID"),
-        api_hash=config.get("pyrogram", "API_HASH"),
-        bot_token=config.get("pyrogram", "BOT_TOKEN"),
-        ipv6=ipv6,
-    )
-
-    app: App = App(param)
-    app.setup()
-    app.run()
-
-    Database.close()
+        app: App = App(param)
+        app.setup()
+        app.run()
 
     return len(argv) - 1
