@@ -31,15 +31,15 @@ class AppParameters:
     bot_token: str
     """Bot token."""
 
+    connection: Connection
+    """Database connection."""
+
     in_memory: bool = True
     """:obj:`True` if the Pyrogram session
     should be in memory, otherwise :obj:`False`."""
 
     ipv6: bool = False
     """:obj:`True` if the client should use IPv6, otherwise :obj:`False`."""
-
-    connection: Connection | None = None
-    """Database connection."""
 
     name: str = constants.DEFAULT_NAME
     """Name of the client."""

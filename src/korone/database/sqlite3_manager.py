@@ -20,9 +20,6 @@ class Column(Enum):
     COMMAND = auto()
     STATE = auto()
 
-    def __str__(self) -> str:
-        return self.name.lower()
-
 
 T = TypeVar("T")
 
@@ -31,9 +28,9 @@ class Manager(Generic[T]):
     """Base class for all database managers."""
 
     def __init__(self, connection: Connection, table: str):
-        self.conn: Connection = connection
+        self._connection: Connection = connection
         self._table: str = table
-        self.table = self.conn.table(self._table)
+        self.table = self._connection.table(self._table)
 
     def insert(self, item: T) -> None:
         self.table.insert(item)

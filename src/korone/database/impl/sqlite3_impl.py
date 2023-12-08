@@ -9,7 +9,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any, Protocol
 
-from korone.constants import DEFAULT_DBFILE_PATH
+from korone.constants import DATABASE_SETUP, DEFAULT_DBFILE_PATH
 from korone.database.query import Query
 from korone.database.table import Document, Documents, Table
 
@@ -113,6 +113,8 @@ class SQLite3Connection:
 
     def __enter__(self):
         self.connect()
+        self._executescript(DATABASE_SETUP)
+        return self._conn
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
@@ -129,6 +131,16 @@ class SQLite3Connection:
         # for readability, we shorten self._conn to conn
         with conn:
             return conn.execute(sql, parameters)
+
+    def _executescript(self, sql: str):
+        # this method should only be called
+        # internally, thereby we can afford to not check
+        # its nullity
+        conn: sqlite3.Connection = self._conn  # type: ignore
+
+        # for readability, we shorten self._conn to conn
+        with conn:
+            return conn.executescript(sql)
 
     def connect(self):
         """Connect to the SQLite3 Database."""

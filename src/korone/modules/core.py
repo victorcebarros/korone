@@ -123,7 +123,8 @@ def toggle(command: Command) -> None:
 
     COMMANDS[command.command]["chat"][command.chat_id] = command.state
 
-    cmdmgr = CommandManager(SQLite3Connection())
+    with SQLite3Connection() as conn:
+        cmdmgr = CommandManager(conn)
 
     if command.state:
         cmdmgr.enable(command.command, command.chat_id)
@@ -183,10 +184,10 @@ def register_command(app: Client, command: FunctionType) -> bool:
                     "parent": parent,
                 }
 
-            cmdmgr = CommandManager(SQLite3Connection())
+            with SQLite3Connection() as conn:
+                cmdmgr = CommandManager(conn)
 
-            query = Query()
-            for each in cmdmgr.query(query[str(Column.COMMAND.__str__)] == parent):
+            for each in cmdmgr.query(Query()[Column.COMMAND.name.lower()] == parent):
                 log.debug(
                     "Fetched chat state from the database: %s => %s",
                     each.chat_id,

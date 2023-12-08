@@ -33,6 +33,10 @@ def main(argv: list[str]) -> int:
     ipv6 = config.get("pyrogram", "USE_IPV6").lower() in ("yes", "true", "1")
 
     with SQLite3Connection() as conn:
+        if not conn:
+            log.error("Database connection failed")
+            return 1
+
         param: AppParameters = AppParameters(
             api_id=config.get("pyrogram", "API_ID"),
             api_hash=config.get("pyrogram", "API_HASH"),
