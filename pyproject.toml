@@ -1,32 +1,48 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-
 [project]
 name = "korone"
 version = "0.1.0"
 description = "Korone is a simple multipurpose Telegram Bot."
 readme = "README.rst"
-license = { file="LICENSE" }
-requires-python = ">=3.8"
+license = { file = "LICENSE" }
+requires-python = ">=3.12"
+authors = [{ name = "Victor Cebarros" }]
+maintainers = [{ name = "Victor Cebarros" }, { name = "Hitalo M." }]
+dependencies = ["pyrogram>=2.0.106", "tgcrypto>=1.2.5", "pyyaml>=6.0.1"]
 
-dependencies = [
-    "pyrogram >= 2.0.41",
-    "tgcrypto >= 1.2.3",
-    "pyyaml >= 6.0"
-]
-
-tests = [
-    "pytest >= 7.1.2",
-    "faker >= 14.1.0"
-]
-
-authors = [
-    { name="Victor Cebarros" },
-]
-
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project.urls]
 "Homepage" = "https://github.com/victorcebarros/korone"
 "Bug Tracker" = "https://github.com/victorcebarros/korone/issues"
+
+[project.optional-dependencies]
+tests = ["pytest>=7.4.3", "faker>=20.1.0"]
+
+[tool.ruff]
+line-length = 99
+src = ["src/korone"]
+target-version = "py312"
+select = [
+    "I",    # isort
+    "E",    # pycodestyle
+    "W",    # pycodestyle
+    "UP",   # pyupgrade
+    "F",    # pyflakes
+    "SIM",  # flake8-simplify
+    "RET",  # flake8-return
+    "C4",   # flake8-comprehensions
+    "PTH",  # flake8-use-pathlib
+    "PERF", # perflint
+    "N",    # pep8-naming
+    "RUF",  # ruff
+]
+ignore = ["RUF001", "RUF002", "RUF003"]
+preview = true
+
+[tool.ruff.isort]
+known-first-party = ["src/korone"]
+
+[tool.rye]
+managed = true

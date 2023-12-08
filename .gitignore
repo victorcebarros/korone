@@ -18,3 +18,7 @@ korone.sqlite
 venv/
 
 .vscode
+
+.python-version
+requirements-dev.lock
+requirements.lock
