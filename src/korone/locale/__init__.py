@@ -3,12 +3,12 @@ The ``korone.locale`` is the package that manages Korone's locales.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import logging
 from io import TextIOWrapper
-from os import path
-from typing import Any
+from pathlib import Path
+from typing import Any, ClassVar
 
 import yaml
 
@@ -20,10 +20,10 @@ log = logging.getLogger(__name__)
 class StringResource:
     """Get locale-specific string resources."""
 
-    languages: dict[str, Any] = {}
+    languages: ClassVar[dict[str, Any]] = {}
     """The languages dictionary."""
 
-    dirpath: str = path.dirname(__file__)
+    dirpath: Path = Path(__file__).parent
     """The directory path of the package."""
 
     @classmethod
@@ -43,14 +43,14 @@ class StringResource:
 
         log.info("Loading language locale for %s", language_code)
 
-        langpack: str = path.join(cls.dirpath, f"{language_code}.yaml")
+        langpack: Path = Path(cls.dirpath / f"{language_code}.yaml")
 
-        if not path.isfile(langpack):
+        if not Path(langpack).is_file():
             return cls.load("en")
 
         try:
             langfile: TextIOWrapper
-            with open(langpack, "r", encoding="utf-8") as langfile:
+            with Path(langpack).open(encoding="utf-8") as langfile:
                 content: dict = yaml.safe_load(langfile)
 
                 cls.languages[language_code] = content
@@ -71,7 +71,8 @@ class StringResource:
         Args:
             language_code (:obj:`str`): Specify the language of the string that is being looked up.
             resource (:obj:`str`): Specify the resource that is being loaded.
-            default (:obj:`str`, *optional*): Set a default value if the resource is not found. Defaults to "".
+            default (:obj:`str`, *optional*): Set a default value if the resource is not found.
+            Defaults to "".
 
         Returns:
             :obj:`str`: The string at the given resource.

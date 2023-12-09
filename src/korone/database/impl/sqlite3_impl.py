@@ -3,18 +3,21 @@ SQLite3 implementation of the Connection and Table.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import sqlite3
+from pathlib import Path
 from typing import Any, Protocol
 
-from korone.database.table import Document, Documents, Table
+from korone.constants import DATABASE_SETUP, DEFAULT_DBFILE_PATH
 from korone.database.query import Query
+from korone.database.table import Document, Documents, Table
 
 
 class _Conn(Protocol):
     """Class with SQLite3-specific bits and pieces."""
-    _path: str
+
+    _path: Path
     _args: tuple
     _kwargs: dict
     _conn: sqlite3.Connection | None = None
@@ -29,6 +32,7 @@ class _Conn(Protocol):
 
 class SQLite3Table:
     """Represents the specifics of a SQLitie3 Table."""
+
     _conn: _Conn
     _table: str
 
@@ -41,47 +45,75 @@ class SQLite3Table:
 
     def insert(self, fields: Any | Document):
         """Insert a row on the table."""
-        msg = "Insertion has not been implemented yet."
-        raise NotImplementedError(msg)
+        if isinstance(fields, Document):
+            values = tuple(fields.values())
+        elif isinstance(fields, tuple | list):
+            values = fields
+        else:
+            raise TypeError("Fields must be a Document, tuple, or list")
 
-        if not isinstance(fields, Document):
-            msg = "Types other than Document have not yet been implemented."
-            raise NotImplementedError(msg)
+        placeholders = ", ".join(["?"] * len(values))
+
+        sql = f"INSERT INTO {self._table} VALUES ({placeholders})"
+
+        self._conn._execute(sql, tuple(values))
 
     def query(self, query: Query) -> Documents:
         """Query rows that match the criteria."""
+        clause, data = query.compile()
 
-        msg = "Querying has not been implemented yet."
-        raise NotImplementedError(msg)
+        sql = f"SELECT * FROM {self._table} WHERE {clause}"
+
+        rows = self._conn._execute(sql, data).fetchall()
+
+        return [Document(row) for row in rows]
 
     def update(self, fields: Any | Document, query: Query):
         """Update fields on rows that match the criteria."""
+        if isinstance(fields, Document):
+            pairs = list(fields.items())
+        elif isinstance(fields, tuple | list):
+            pairs = fields
+        else:
+            raise TypeError("Fields must be a Document, tuple, or list")
 
-        msg = "Updating has not been implemented yet."
-        raise NotImplementedError(msg)
+        assignments = [f"{key} = ?" for key, value in pairs]
+
+        assignments = ", ".join(assignments)
+
+        values = [value for key, value in pairs]
+
+        clause, data = query.compile()
+
+        sql = f"UPDATE {self._table} SET {assignments} WHERE {clause}"
+
+        self._conn._execute(sql, (*values, *data))
 
     def delete(self, query: Query):
         """Delete rows that match the criteria."""
+        clause, data = query.compile()
 
-        msg = "Deleting has not been implemented yet."
-        raise NotImplementedError(msg)
+        sql = f"DELETE FROM {self._table} WHERE {clause}"
+
+        self._conn._execute(sql, data)
 
 
 class SQLite3Connection:
     """SQLite3 Database Connection."""
 
-    _path: str
+    _path: Path
     _args: tuple
     _kwargs: dict
     _conn: sqlite3.Connection | None = None
 
-    def __init__(self, *args, path: str = ":memory", **kwargs):
-        self._path: str = path
+    def __init__(self, *args, path: Path = DEFAULT_DBFILE_PATH, **kwargs):
+        self._path: Path = path
         self._args = args
         self._kwargs = kwargs
 
     def __enter__(self):
         self.connect()
+        return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
@@ -99,16 +131,31 @@ class SQLite3Connection:
         with conn:
             return conn.execute(sql, parameters)
 
+    def _executescript(self, sql: str):
+        # this method should only be called
+        # internally, thereby we can afford to not check
+        # its nullity
+        conn: sqlite3.Connection = self._conn  # type: ignore
+
+        # for readability, we shorten self._conn to conn
+        with conn:
+            return conn.executescript(sql)
+
     def connect(self):
         """Connect to the SQLite3 Database."""
         if self._is_open():
             raise RuntimeError("Connection is already in place.")
 
         self._conn = sqlite3.connect(
-            self._path,
-            *self._args,
-            **self._kwargs
+            self._path.expanduser().resolve(), *self._args, **self._kwargs
         )
+
+    def setup(self):
+        """Setup the SQLite3 Database."""
+        if not self._is_open():
+            raise RuntimeError("Connection is not yet open.")
+
+        self._executescript(DATABASE_SETUP)
 
     def table(self, name: str) -> Table:
         """Return a Table which can be operated upon."""

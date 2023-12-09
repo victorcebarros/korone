@@ -3,13 +3,13 @@ Manages Korone's configuration.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import logging
-import os
 import sys
 from configparser import ConfigParser
 from os import path
+from pathlib import Path
 
 from korone import constants
 
@@ -27,7 +27,7 @@ config["pyrogram"] = {
 }
 
 
-def init(cfgpath: str = "") -> None:
+def init(cfgpath: Path | None = None) -> None:
     """The init function initializes the configuration module.
     It reads the default configuration file from DEFAULT_CONFIG_PATH, and
     creates the directory containing it if it does not exist. If the file does
@@ -41,25 +41,25 @@ def init(cfgpath: str = "") -> None:
     if not cfgpath:
         cfgpath = constants.DEFAULT_CONFIG_PATH
 
-    dirname: str = path.dirname(cfgpath)
+    dirname: Path = Path(cfgpath).parent
 
     log.info("Initializing configuration module")
     log.debug("Using path %s", path)
 
-    if dirname != "" and not path.isdir(dirname):
+    if dirname != "" and not Path(dirname).is_dir():
         log.info("Could not find configuration directory")
         try:
             log.debug("Creating configuration directory")
-            os.mkdir(dirname)
+            Path(dirname).mkdir(parents=True)
         except OSError as err:
             log.critical("Could not create directory: %s", err)
             sys.exit(1)
 
-    if not path.isfile(cfgpath):
+    if not Path(cfgpath).is_file():
         log.info("Could not find configuration file")
         try:
             log.debug("Creating configuration file")
-            with open(cfgpath, "w", encoding="utf-8") as configfile:
+            with Path(cfgpath).open("w", encoding="utf-8") as configfile:
                 config.write(configfile)
         except OSError as err:
             log.critical("Could not create configuration file: %s", err)

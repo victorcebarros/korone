@@ -3,24 +3,26 @@ Korone's Custom Module System.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import inspect
 import logging
+from collections.abc import Iterable
 from dataclasses import dataclass
 from importlib import import_module
 from types import FunctionType, ModuleType
-from typing import Any, Iterable
+from typing import Any
 
 from pyrogram import Client, filters
 from pyrogram.handlers.handler import Handler
 from pyrogram.types import Message
 
 from korone import constants
-from korone.database import Database
-from korone.database.manager import Clause, Column, Command, CommandManager
-from korone.utils.traverse import bfs_attr_search
+from korone.database.impl.sqlite3_impl import SQLite3Connection
+from korone.database.query import Query
+from korone.database.sqlite3_manager import Column, Command, CommandManager
 from korone.utils.misc import get_command_name
+from korone.utils.traverse import bfs_attr_search
 
 log = logging.getLogger(__name__)
 
@@ -121,13 +123,14 @@ def toggle(command: Command) -> None:
 
     COMMANDS[command.command]["chat"][command.chat_id] = command.state
 
-    cmdmgr = CommandManager(Database())
+    with SQLite3Connection() as conn:
+        cmdmgr = CommandManager(conn)
 
-    if command.state:
-        cmdmgr.enable(command.command, command.chat_id)
-        return
+        if command.state:
+            cmdmgr.enable(command.command, command.chat_id)
+            return
 
-    cmdmgr.disable(command.command, command.chat_id)
+        cmdmgr.disable(command.command, command.chat_id)
 
 
 def register_command(app: Client, command: FunctionType) -> bool:
@@ -181,17 +184,18 @@ def register_command(app: Client, command: FunctionType) -> bool:
                     "parent": parent,
                 }
 
-            cmdmgr = CommandManager(Database())
+            with SQLite3Connection() as conn:
+                cmdmgr = CommandManager(conn)
 
-            for each in cmdmgr.query(Clause(Column.COMMAND, parent)):
-                log.debug(
-                    "Fetched chat state from the database: %s => %s",
-                    each.chat_id,
-                    str(each.state),
-                )
-                COMMANDS[parent]["chat"][each.chat_id] = each.state
+                for each in cmdmgr.query(Query()[Column.COMMAND.name.lower()] == parent):
+                    log.debug(
+                        "Fetched chat state from the database: %s => %s",
+                        each.chat_id,
+                        str(each.state),
+                    )
+                    COMMANDS[parent]["chat"][each.chat_id] = each.state
 
-            log.debug("New command node: %s", COMMANDS[parent])
+                log.debug("New command node: %s", COMMANDS[parent])
 
     return successful
 
@@ -224,13 +228,7 @@ def load_module(app: Client, module: Module) -> None:
 
     commands: Iterable[FunctionType] = filter(
         lambda fun: hasattr(fun, "handlers"),
-        filter(
-            inspect.isfunction,
-            map(
-                lambda var: getattr(component, var),
-                vars(component)
-            )
-        )
+        filter(inspect.isfunction, (getattr(component, var) for var in vars(component))),
     )
 
     for command in commands:

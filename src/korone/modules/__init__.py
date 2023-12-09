@@ -4,7 +4,7 @@ Pyrogram's Client and handling with all the commands modules.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 Victor Cebarros <https://github.com/victorcebarros>
+# Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import logging
 from dataclasses import dataclass
@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from pyrogram import Client
 
 from korone import constants
+from korone.database.connection import Connection
 from korone.modules import core
 
 log = logging.getLogger(__name__)
@@ -29,6 +30,9 @@ class AppParameters:
 
     bot_token: str
     """Bot token."""
+
+    connection: Connection
+    """Database connection."""
 
     in_memory: bool = True
     """:obj:`True` if the Pyrogram session
@@ -66,6 +70,8 @@ class App:
             name=self.parameters.name,
             workers=self.parameters.workers,
         )
+
+        self.conn = self.parameters.connection
 
         log.debug("Loading modules")
         core.load_all(self.app)

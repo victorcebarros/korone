@@ -3,14 +3,13 @@ Tests for the user manager.
 """
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2022 hytalo-bassi <https://github.com/hytalo-bassi>
+# Copyright (c) 2023 hytalo-bassi <https://github.com/hytalo-bassi>
 
 from faker import Faker
-from pyrogram.types import User
-from pytest import fixture
-
 from korone.database import Database
 from korone.database.manager import Clause, Column, UserManager
+from pyrogram.types import User
+from pytest import fixture
 
 Database.connect("korone-test.db")
 Database.setup()

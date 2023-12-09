@@ -10,10 +10,13 @@ docs/build/
 docs/source/_build/
 
 downloads/
-korone.conf
 *.session*
 *.db*
 
 venv/
 
 .vscode
+
+.python-version
+requirements-dev.lock
+requirements.lock
