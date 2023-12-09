@@ -24,13 +24,13 @@ LOGGER_FORMAT_OUTPUT: str = (
 )
 """The format to be used in the logger."""
 
-XDG_CONFIG_HOME: str = os.environ.get("XDG_CONFIG_HOME", "~/.config")
+XDG_CONFIG_HOME: str = os.environ.get("XDG_CONFIG_HOME", str(Path(Path.home() / ".config")))
 """
 The XDG_CONFIG_HOME environment variable.
 Where user-specific configurations should be written (analogous to /etc).
 """
 
-XDG_DATA_HOME: Path = Path("~/.local/share").expanduser()
+XDG_DATA_HOME: str = os.environ.get("XDG_DATA_HOME", str(Path(Path.home() / ".local/share")))
 """
 The XDG_DATA_HOME environment variable.
 Where user-specific data files should be written (analogous to /usr/share).
@@ -50,26 +50,26 @@ DEFAULT_NAME: str = "korone"
 
 DATABASE_SETUP: str = """\
 CREATE TABLE IF NOT EXISTS Users (
-    uuid INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     language VARCHAR(2) NOT NULL DEFAULT "en",
     registrydate INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Chats (
-    uuid INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     language VARCHAR(2) NOT NULL DEFAULT "en",
     registrydate INTEGER NOT NULL,
     chattype TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS DisabledCommands (
-    chat_uuid INTEGER,
+    chat_id INTEGER,
     command TEXT,
     state BIT
 );
 
 CREATE TABLE IF NOT EXISTS Filters (
-    chat_uuid INTEGER,
+    chat_id INTEGER,
     handler TEXT,
     data TEXT,
     file_id TEXT,

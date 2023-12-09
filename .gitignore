@@ -10,8 +10,6 @@ docs/build/
 docs/source/_build/
 
 downloads/
-korone.conf
-korone.sqlite
 *.session*
 *.db*
 

@@ -126,11 +126,11 @@ def toggle(command: Command) -> None:
     with SQLite3Connection() as conn:
         cmdmgr = CommandManager(conn)
 
-    if command.state:
-        cmdmgr.enable(command.command, command.chat_id)
-        return
+        if command.state:
+            cmdmgr.enable(command.command, command.chat_id)
+            return
 
-    cmdmgr.disable(command.command, command.chat_id)
+        cmdmgr.disable(command.command, command.chat_id)
 
 
 def register_command(app: Client, command: FunctionType) -> bool:
@@ -187,15 +187,15 @@ def register_command(app: Client, command: FunctionType) -> bool:
             with SQLite3Connection() as conn:
                 cmdmgr = CommandManager(conn)
 
-            for each in cmdmgr.query(Query()[Column.COMMAND.name.lower()] == parent):
-                log.debug(
-                    "Fetched chat state from the database: %s => %s",
-                    each.chat_id,
-                    str(each.state),
-                )
-                COMMANDS[parent]["chat"][each.chat_id] = each.state
+                for each in cmdmgr.query(Query()[Column.COMMAND.name.lower()] == parent):
+                    log.debug(
+                        "Fetched chat state from the database: %s => %s",
+                        each.chat_id,
+                        str(each.state),
+                    )
+                    COMMANDS[parent]["chat"][each.chat_id] = each.state
 
-            log.debug("New command node: %s", COMMANDS[parent])
+                log.debug("New command node: %s", COMMANDS[parent])
 
     return successful
 

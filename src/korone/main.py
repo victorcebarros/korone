@@ -6,7 +6,6 @@ Entry point of the Korone.
 # Copyright (c) 2023 Victor Cebarros <https://github.com/victorcebarros>
 
 import logging
-from pathlib import Path
 
 from korone import config
 from korone.database.impl.sqlite3_impl import SQLite3Connection
@@ -28,7 +27,7 @@ def main(argv: list[str]) -> int:
     """
     log.info("Program started")
 
-    config.init(Path("korone.conf"))
+    config.init()
 
     ipv6 = config.get("pyrogram", "USE_IPV6").lower() in ("yes", "true", "1")
 

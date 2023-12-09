@@ -8,7 +8,7 @@ The toggle module enables and disables commands on a per chat basis.
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
-from korone.database.manager import Command
+from korone.database.sqlite3_manager import Command
 from korone.locale import StringResource
 from korone.modules.core import toggle
 from korone.modules.hello import get_language_code

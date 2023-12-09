@@ -114,7 +114,7 @@ class SQLite3Connection:
     def __enter__(self):
         self.connect()
         self._executescript(DATABASE_SETUP)
-        return self._conn
+        return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
@@ -147,7 +147,9 @@ class SQLite3Connection:
         if self._is_open():
             raise RuntimeError("Connection is already in place.")
 
-        self._conn = sqlite3.connect(self._path, *self._args, **self._kwargs)
+        self._conn = sqlite3.connect(
+            self._path.expanduser().resolve(), *self._args, **self._kwargs
+        )
 
     def table(self, name: str) -> Table:
         """Return a Table which can be operated upon."""

@@ -27,7 +27,7 @@ config["pyrogram"] = {
 }
 
 
-def init(cfgpath: Path) -> None:
+def init(cfgpath: Path | None = None) -> None:
     """The init function initializes the configuration module.
     It reads the default configuration file from DEFAULT_CONFIG_PATH, and
     creates the directory containing it if it does not exist. If the file does
@@ -50,7 +50,7 @@ def init(cfgpath: Path) -> None:
         log.info("Could not find configuration directory")
         try:
             log.debug("Creating configuration directory")
-            Path(dirname).mkdir()
+            Path(dirname).mkdir(parents=True)
         except OSError as err:
             log.critical("Could not create directory: %s", err)
             sys.exit(1)
