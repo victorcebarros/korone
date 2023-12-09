@@ -62,7 +62,7 @@ class CommandManager(Manager[Command]):
         super().__init__(connection, self._table)
 
         self.columns: dict[Column, str] = {
-            Column.UUID: "chat_uuid",
+            Column.UUID: "chat_id",
             Column.COMMAND: "command",
             Column.STATE: "state",
         }
