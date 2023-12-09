@@ -71,7 +71,7 @@ class CommandManager(Manager[Command]):
         if item.chat_id is None:
             raise RuntimeError("item.chat_id must not be None!")
 
-        self.table.insert(item)
+        self.table.insert(Document(item.__dict__))
 
     def cast(self, row: Row) -> Command:
         return Command(
