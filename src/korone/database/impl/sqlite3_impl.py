@@ -113,7 +113,6 @@ class SQLite3Connection:
 
     def __enter__(self):
         self.connect()
-        self._executescript(DATABASE_SETUP)
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -150,6 +149,13 @@ class SQLite3Connection:
         self._conn = sqlite3.connect(
             self._path.expanduser().resolve(), *self._args, **self._kwargs
         )
+
+    def setup(self):
+        """Setup the SQLite3 Database."""
+        if not self._is_open():
+            raise RuntimeError("Connection is not yet open.")
+
+        self._executescript(DATABASE_SETUP)
 
     def table(self, name: str) -> Table:
         """Return a Table which can be operated upon."""

@@ -36,6 +36,8 @@ def main(argv: list[str]) -> int:
             log.error("Database connection failed")
             return 1
 
+        conn.setup()
+
         param: AppParameters = AppParameters(
             api_id=config.get("pyrogram", "API_ID"),
             api_hash=config.get("pyrogram", "API_HASH"),
